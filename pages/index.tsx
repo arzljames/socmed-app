@@ -1,86 +1,101 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
+import type { NextPage } from "next";
+import Head from "next/head";
+import Post from "../components/Home/Post";
+import { useState } from "react";
+import Header from "../components/Home/Header";
+import Navbar from "../components/Home/Navbar";
+import PostModal from "../components/Home/PostModal";
+import Sidebar from "../components/Home/Sidebar";
 
 const Home: NextPage = () => {
+  const [isPosting, setIsPosting] = useState<Boolean>(false);
+  const [isSearching, setIsSearching] = useState<Boolean>(false);
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <div>
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>Home Feed | SocMed</title>
       </Head>
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
+      {isPosting && <PostModal setIsPosting={setIsPosting} />}
 
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
-        </p>
+      <div className="flex min-h-screen w-screen flex-col items-start justify-start bg-gray-100 md:w-full md:flex-row md:bg-white">
+        {/* Sidebar */}
+        <Sidebar />
 
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and its API.
-            </p>
-          </a>
+        {/* Home Feed */}
+        <div className="h-full w-full flex-1">
+          <div className="sticky top-0">
+            <Header />
+            <Navbar />
+          </div>
+          {/* Posts */}
+          <div className="md:w-3/ my-3 h-auto w-full">
+            <Post setIsPosting={setIsPosting} />
+          </div>
+          {/* Feed */}
+          <div className="mb-2  w-full border-y-2 bg-white px-3 py-3">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam
+            recusandae natus minima autem impedit, quidem commodi veniam ut
+            mollitia. Unde vel a magni eaque deleniti doloribus vero cum rerum,
+            placeat consequuntur ducimus! Accusamus sint repudiandae
+            consequuntur ipsam quae facere nulla dicta sunt magnam eum rerum
+            voluptates officia consequatur quibusdam incidunt eius quisquam, id
+            totam possimus perferendis voluptatem quo delectus mollitia illo.
+            Iure, sequi similique. Cupiditate, sequi. Deleniti temporibus fuga
+            optio provident esse non voluptatibus officiis laboriosam soluta
+            fugiat vitae nobis id, tenetur earum possimus iure minima ratione,
+            impedit qui, ipsum pariatur ea quisquam dolor repudiandae? Dolores
+            atque et doloribus rerum.
+          </div>
 
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
+          <div className="mb-2  w-full border-y-2 bg-white px-3 py-3">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam
+            recusandae natus minima autem impedit, quidem commodi veniam ut
+            mollitia. Unde vel a magni eaque deleniti doloribus vero cum rerum,
+            placeat consequuntur ducimus! Accusamus sint repudiandae
+            consequuntur ipsam quae facere nulla dicta sunt magnam eum rerum
+            voluptates officia consequatur quibusdam incidunt eius quisquam, id
+            totam possimus perferendis voluptatem quo delectus mollitia illo.
+            Iure, sequi similique. Cupiditate, sequi. Deleniti temporibus fuga
+            optio provident esse non voluptatibus officiis laboriosam soluta
+            fugiat vitae nobis id, tenetur earum possimus iure minima ratione,
+            impedit qui, ipsum pariatur ea quisquam dolor repudiandae? Dolores
+            atque et doloribus rerum.
+          </div>
 
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
+          <div className="mb-2  w-full border-y-2 bg-white px-3 py-3">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam
+            recusandae natus minima autem impedit, quidem commodi veniam ut
+            mollitia. Unde vel a magni eaque deleniti doloribus vero cum rerum,
+            placeat consequuntur ducimus! Accusamus sint repudiandae
+            consequuntur ipsam quae facere nulla dicta sunt magnam eum rerum
+            voluptates officia consequatur quibusdam incidunt eius quisquam, id
+            totam possimus perferendis voluptatem quo delectus mollitia illo.
+            Iure, sequi similique. Cupiditate, sequi. Deleniti temporibus fuga
+            optio provident esse non voluptatibus officiis laboriosam soluta
+            fugiat vitae nobis id, tenetur earum possimus iure minima ratione,
+            impedit qui, ipsum pariatur ea quisquam dolor repudiandae? Dolores
+            atque et doloribus rerum.
+          </div>
 
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+          <div className="mb-2  w-full border-y-2 bg-white px-3 py-3">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam
+            recusandae natus minima autem impedit, quidem commodi veniam ut
+            mollitia. Unde vel a magni eaque deleniti doloribus vero cum rerum,
+            placeat consequuntur ducimus! Accusamus sint repudiandae
+            consequuntur ipsam quae facere nulla dicta sunt magnam eum rerum
+            voluptates officia consequatur quibusdam incidunt eius quisquam, id
+            totam possimus perferendis voluptatem quo delectus mollitia illo.
+            Iure, sequi similique. Cupiditate, sequi. Deleniti temporibus fuga
+            optio provident esse non voluptatibus officiis laboriosam soluta
+            fugiat vitae nobis id, tenetur earum possimus iure minima ratione,
+            impedit qui, ipsum pariatur ea quisquam dolor repudiandae? Dolores
+            atque et doloribus rerum.
+          </div>
         </div>
-      </main>
-
-      <footer className="flex h-24 w-full items-center justify-center border-t">
-        <a
-          className="flex items-center justify-center gap-2"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-        </a>
-      </footer>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
