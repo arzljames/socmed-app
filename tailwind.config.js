@@ -13,8 +13,13 @@ module.exports = {
         "color-main": "#5E865A",
         "color-main-dark": "#466443",
         "color-border": "#C0C0C0",
+        "color-bg": "#EFEFEF",
+        "color-bg-dark": "#E2E7E2",
+        "color-bg-light": "#F5F5F5"
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar')
+  ],
 };

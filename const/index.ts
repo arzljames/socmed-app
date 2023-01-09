@@ -14,10 +14,17 @@ export const API_SERVER: string = "http://localhost:3001";
 
 export const HOME_MOBILE_NAV = [
   {
-    name: "Feed",
+    name: "Home Feed",
     iconActive: IoHome,
     iconInactive: IoHomeOutline,
     path: "/",
+  },
+
+  {
+    name: "Message",
+    iconActive: IoChatbubbleEllipses,
+    iconInactive: IoChatbubbleEllipsesOutline,
+    path: "",
   },
 
   {
@@ -34,12 +41,7 @@ export const HOME_MOBILE_NAV = [
     path: "/groups",
   },
 
-  {
-    name: "Message",
-    iconActive: IoChatbubbleEllipses,
-    iconInactive: IoChatbubbleEllipsesOutline,
-    path: "",
-  },
+ 
 ];
 
 export interface NavProps {

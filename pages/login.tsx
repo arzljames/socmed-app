@@ -7,9 +7,9 @@ const Login: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Sign In | SocMed</title>
+        <title>Sign in | SocMed</title>
       </Head>
-      <div className="flex min-h-screen w-full flex-col bg-[#EFEFEF]">
+      <div className="relative flex min-h-screen w-full flex-col bg-color-bg">
         <LoginHeader />
         <div className="flex flex-1 flex-col items-center justify-center px-3 py-10 pb-10">
           <LoginForm />
