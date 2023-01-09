@@ -31,7 +31,7 @@ const Home: NextPage = () => {
               digmpora error temporibus eaque vero optio nostrum suscipit, quam
               officia doloribus non. Culpa repellat consequuntur dicta illum
               blanditiis eos praesentium quasi qui dolores consectetur minus
-              ipsa dolorem, ipsam, facilis quia expedita niet assumenda
+              ipsa dolorem, ipsam, facilis quia expedita niet assusmenda
               provident aliquid? Dolorum similique autem repudiandae veritatis?
               In, mollitia! Possimus officia facere accusamus dolor rem?
             </div>
