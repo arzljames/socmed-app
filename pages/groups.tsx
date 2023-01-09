@@ -10,7 +10,7 @@ const Groups: NextPage = () => {
         <title>Groups | SocMed</title>
       </Head>
 
-      <div className="flex min-h-screen w-screen flex-col items-start justify-start bg-gray-100">
+      <div className="flex min-h-screen w-screen flex-col items-start justify-start bg-gray-100 ">
         <div className="h-full w-full flex-1">
           <div className="sticky top-0">
             <Header />
