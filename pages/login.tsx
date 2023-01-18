@@ -1,7 +1,9 @@
 import LoginHeader from "../components/Login/LoginHeader";
 import LoginForm from "../components/Login/LoginForm";
 import Head from "next/head";
-import { NextPage } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
+import { getSession } from "next-auth/react";
+import { PublicRoute } from "../utils/PublicRoute";
 
 const Login: NextPage = () => {
   return (
@@ -20,3 +22,18 @@ const Login: NextPage = () => {
 };
 
 export default Login;
+
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getSession(context);
+  if (!session) return PublicRoute();
+
+  return {
+    redirect: {
+      destination: "/",
+      permanent: false,
+    },
+    props: {},
+  };
+};
