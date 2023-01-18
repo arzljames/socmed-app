@@ -3,7 +3,7 @@ import { signIn, SignInResponse } from "next-auth/react";
 import { LoginPayloadProps } from "../interface";
 axios.defaults.withCredentials = true;
 
-const apiServer = "http://localhost:3001";
+const apiServer = "https://api-socmed.onrender.com";
 
 export const api = axios.create({
   baseURL: apiServer,
