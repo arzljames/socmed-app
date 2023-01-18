@@ -1,14 +1,14 @@
 import { ReactElement } from "react";
-import { IconType } from "react-icons";
-import { HOME_MOBILE_NAV, NavProps } from "../../const/index";
+import { HOME_MOBILE_NAV } from "../../const/index";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { NavProps } from "../../interface";
 
 const Navbar = (): ReactElement => {
   const router = useRouter();
   const pathName = router.pathname;
   return (
-    <nav className="flex h-12 w-full items-center justify-between border-t-0 border-b-2 bg-white px-3  md:hidden">
+    <nav className="flex h-[50px] w-full items-center justify-between border-t-0 border-b-2 bg-white px-3  md:hidden">
       {HOME_MOBILE_NAV?.map((item: NavProps) => {
         return (
           <Link
