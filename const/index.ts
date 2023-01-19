@@ -8,9 +8,8 @@ import {
   IoLayersOutline,
   IoLayers,
 } from "react-icons/io5";
-import { IconType } from "react-icons";
 
-export const API_SERVER: string = "http://localhost:3001";
+export const API_SERVER: string = "https://api-socmed.onrender.com/";
 
 export const HOME_MOBILE_NAV = [
   {
@@ -41,8 +40,6 @@ export const HOME_MOBILE_NAV = [
     path: "/groups",
   },
 ];
-
-export const serverBaseURL = "http://localhost:3001";
 
 export const CHAT_STATUS = [
   {
