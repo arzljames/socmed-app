@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { serverBaseURL } from "../../../const";
+import { API_SERVER } from "../../../const";
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -16,7 +16,7 @@ export const authOptions = {
         credentials: Record<string, string>,
         req
       ): Promise<any | null> {
-        const res = await fetch(`${serverBaseURL}/api/auth/login`, {
+        const res = await fetch(`${API_SERVER}/api/auth/login`, {
           method: "POST",
           body: JSON.stringify(credentials),
           headers: { "Content-Type": "application/json" },
