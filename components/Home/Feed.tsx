@@ -61,12 +61,12 @@ const Feed = ({ data }: any): ReactElement => {
           <TextParagraph>{data.message}</TextParagraph>
         </div>
         <div className="mt-4 flex justify-between  py-3">
-          <p className="text-xs text-text-sub md:text-sm">
+          <p className="text-xs text-text-sub md:text-xs">
             {CalculateReaction(reactions, initialReaction)}
           </p>
-          <p className="text-xs text-text-sub md:text-sm">4 comments</p>
+          <p className="text-xs text-text-sub md:text-xs">4 comments</p>
         </div>
-        <div className="flex ">
+        <div className="flex">
           <ButtonLike postId={data._id} initialReaction={initialReaction} />
           <ButtonComment setIsCommenting={setIsCommenting} />
           <ButtonShare />

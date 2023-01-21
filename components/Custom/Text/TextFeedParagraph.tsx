@@ -3,7 +3,7 @@ import { ReactChildrenProps } from "../../../interface";
 
 const TextParagraph = ({ children }: ReactChildrenProps): ReactElement => {
   return (
-    <p className="whitespace-pre-wrap text-sm text-text-main md:text-base">
+    <p className="whitespace-pre-wrap text-sm text-text-main md:text-sm">
       {children}
     </p>
   );

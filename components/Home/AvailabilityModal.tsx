@@ -35,8 +35,8 @@ const AvailabilityModal = (): ReactElement => {
               key={item.status}
               className={`flex cursor-pointer items-center rounded-lg border  p-2 ${
                 item.status === status
-                  ? "border-color-border hover:bg-none"
-                  : "border-white hover:bg-gray-200"
+                  ? "border-color-border "
+                  : "border-white "
               } mb-1 duration-75 ease-in-out `}
             >
               <div className="mr-2 flex h-5 w-5 items-center justify-center rounded-full border border-gray-400">
@@ -44,7 +44,7 @@ const AvailabilityModal = (): ReactElement => {
                   <div className={`h-3 w-3 rounded-full ${item.color}`}></div>
                 )}
               </div>
-              <p className="font-medium text-text-sub"> {item.status}</p>
+              <p className="text-sm text-text-sub"> {item.status}</p>
             </li>
           );
         })}
