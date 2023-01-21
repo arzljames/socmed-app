@@ -16,6 +16,7 @@ const Header = (): ReactElement => {
   const ref = useRef();
   const [isNotificationOpen, setIsNotificationOpen] = useState<Boolean>(false);
   const [isSignOutOpen, setIsSignOutOpen] = useState<Boolean>(false);
+
   useOnClickOutside(ref, () => setIsNotificationOpen(false));
 
   const handleDropDown = () => {
@@ -26,17 +27,17 @@ const Header = (): ReactElement => {
   return (
     <header
       className={
-        "flex h-[50px] w-full items-center justify-between  bg-white px-3 shadow-md"
+        "flex h-[60px] w-full items-center justify-between bg-white  px-3 shadow-md sm:px-10 md:px-[10%]"
       }
     >
       <Link href="/">
-        <img className="h-9" src="/logo.svg" alt="SocMed" />
+        <img className="h-9" src="/logo-dark.svg" alt="SocMed" />
       </Link>
-      <input
+      {/* <input
         type="search"
         className="hidden h-8  rounded-full bg-gray-100 px-4 text-sm outline-none placeholder:text-xs md:flex md:w-1/3"
         placeholder="#Search and discover things in SocMed"
-      />
+      /> */}
       <div className="flex items-center justify-end">
         <div className="mr-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 md:hidden">
           <IoSearchOutline className="text-gray-800" fontSize={20} />

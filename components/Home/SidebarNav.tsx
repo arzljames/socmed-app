@@ -14,8 +14,8 @@ const SidebarNav = (): ReactElement => {
         return (
           <li
             className={`${
-              pathName === item.path && "bg-color-main-light"
-            } mb-1 h-10 rounded-md px-2 duration-100 ease-in-out hover:bg-color-main-light`}
+              pathName === item.path && "border bg-white"
+            } mb-1 h-10 rounded-lg px-2 duration-100 ease-in-out hover:bg-white`}
             key={item.name}
           >
             <Link className="flex h-full w-full items-center" href={item.path}>
@@ -27,8 +27,8 @@ const SidebarNav = (): ReactElement => {
               <p
                 className={`${
                   pathName === item.path
-                    ? "font-bold  text-color-main-dark"
-                    : "font-medium text-text-sub"
+                    ? "font-semibold  text-color-main-dark"
+                    : "text-text-sub"
                 } text-sm`}
               >
                 {item.name}

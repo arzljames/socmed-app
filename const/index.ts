@@ -8,9 +8,15 @@ import {
   IoLayersOutline,
   IoLayers,
 } from "react-icons/io5";
-import { IconType } from "react-icons";
+import {
+  BsFillEmojiAngryFill,
+  BsFillEmojiFrownFill,
+  BsFillEmojiHeartEyesFill,
+  BsFillEmojiLaughingFill,
+} from "react-icons/bs";
 
-export const API_SERVER: string = "http://localhost:3001";
+export const API_SERVER: string = "https://api-socmed.onrender.com/";
+export const API_SERVER_DEV: string = "http://localhost:3001";
 
 export const HOME_MOBILE_NAV = [
   {
@@ -42,8 +48,6 @@ export const HOME_MOBILE_NAV = [
   },
 ];
 
-export const serverBaseURL = "http://localhost:3001";
-
 export const CHAT_STATUS = [
   {
     status: "Online",
@@ -56,5 +60,29 @@ export const CHAT_STATUS = [
   {
     status: "Busy",
     color: "bg-amber-500",
+  },
+];
+
+export const REACTIONS_EMOJI = [
+  { id: 1, name: "Like", reaction: "👍" },
+  {
+    id: 2,
+    name: "Love",
+    reaction: "😍",
+  },
+  {
+    id: 3,
+    name: "Haha",
+    reaction: "😂",
+  },
+  {
+    id: 4,
+    name: "Sad",
+    reaction: "😞",
+  },
+  {
+    id: 5,
+    name: "Angry",
+    reaction: "😠",
   },
 ];

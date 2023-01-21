@@ -7,7 +7,7 @@ const Groups: NextPage = () => {
   return (
     <div>
       <Head>
-        <title>Groups | SocMed</title>
+        <title>Groups | CreatVe</title>
       </Head>
 
       <div className="flex min-h-screen w-screen flex-col items-start justify-start bg-gray-100 ">

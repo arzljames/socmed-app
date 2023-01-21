@@ -75,3 +75,27 @@ export interface LoginPayloadProps {
   username: string;
   password: string;
 }
+
+export interface AccountRegisterProps {
+  first_name: string;
+  last_name: string;
+  email: string;
+  username: string;
+  password: string;
+  confirm_password?: string;
+}
+
+export interface RegisterValidationErrors {
+  fname_error: boolean;
+  fname_error_msg: string;
+  lname_error: boolean;
+  lname_error_msg: string;
+  email_error: boolean;
+  email_error_msg: string;
+  username_error: boolean;
+  username_error_msg: string;
+  password_error: boolean;
+  password_error_msg: string;
+  confirm_password_error?: boolean;
+  confirm_password_error_msg?: string;
+}

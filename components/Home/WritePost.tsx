@@ -1,15 +1,19 @@
 import { ReactElement, useRef, useState } from "react";
 import useAutosizeTextArea from "../../hooks/useAutoSizeTextArea";
-import { IoImages, IoFilm, IoSendOutline } from "react-icons/io5";
+import { IoCamera, IoDocument, IoCaretDown } from "react-icons/io5";
 import ProfileAvatar from "./ProfileAvatar";
 import useUserData from "../../hooks/useUserData";
-import { api } from "../../api/api";
+import { POST } from "../../api/api";
 import { useRouter } from "next/router";
 import TextFeedName from "../Custom/Text/TextFeedName";
 import useRefreshData from "../../hooks/useRefreshData";
+import { IoPeopleOutline, IoGlobeOutline } from "react-icons/io5";
+import Error from "next/error";
 
 const WritePost = (): ReactElement => {
   const [post, setPost] = useState<string>("");
+  const [privacyDropdown, setPrivacyDropdown] = useState<Boolean>(false);
+  const [privacy, setPrivacy] = useState<string>("Friends");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const { user } = useUserData() as any;
 
@@ -32,58 +36,81 @@ const WritePost = (): ReactElement => {
   };
 
   const handleSubmitPost = async () => {
-    const res = await api.post("/api/post/create", {
-      message: post,
-      author: user._id,
-    });
+    try {
+      const res = await POST("/api/post/create", user.access_token, {
+        message: post,
+        author: user._id,
+      });
 
-    useRefreshData(router);
-    setPost("");
-    return res;
+      useRefreshData(router);
+      setPost("");
+      return res;
+    } catch (error) {
+      throw new Error(error);
+    }
   };
 
   return (
-    <div className="mb-4 flex w-full rounded-xl bg-white px-3 py-3 shadow-sm md:px-6  md:py-4">
-      <div className="flex w-full">
+    <div className="mb-4 flex w-full flex-col rounded-xl bg-white  px-3 py-3 shadow-sm  md:px-6 md:py-4">
+      <div className="mb-2 flex  w-full items-center ">
         <ProfileAvatar />
-        <div className="0 flex flex-1 flex-col md:ml-2 ">
-          <div className="mb-4">
-            <TextFeedName>Arzl James Lao</TextFeedName>
+        <div className="relative flex flex-col items-start ">
+          <TextFeedName>Arzl James Lao</TextFeedName>
+          <div
+            onClick={() => setPrivacyDropdown(!privacyDropdown)}
+            className=" mt-1 flex cursor-pointer items-center rounded-md bg-gray-100 py-1 px-2 hover:bg-gray-200"
+          >
+            <p className=" mr-1 text-xs text-text-sub">{privacy}</p>
+            <IoCaretDown className="text-xs  text-text-main" />
           </div>
-          <textarea
-            className="hover:to-color-bg-light mb-3 h-[50px] max-h-32 resize-none overflow-y-scroll    rounded-xl  border py-3  px-3 text-text-main outline-none duration-100 ease-in-out placeholder:text-sm focus:border focus:border-color-border  hover:border "
-            placeholder="What's Poppin?"
-            value={post}
-            ref={textAreaRef}
-            onChange={handleChange}
-          ></textarea>
-          <div className="flex  pb-3">
-            <button className="mr-2 flex h-8 items-center justify-center rounded-full border border-gray-300 px-3 text-xs font-semibold  ">
-              <IoImages className="mr-2 text-[#10ac84]" />
-              <p className="text-text-sub">Image</p>
-            </button>
-
-            <input type="file" className="hidden" />
-
-            <button className="mr-2 flex h-8 items-center justify-center rounded-full border border-gray-300  px-3 text-xs font-semibold">
-              <IoFilm className="mr-2 text-[#0abde3]" />
-              <p className="text-text-sub">Video</p>
-            </button>
-          </div>
-          {post && (
-            <div className="flex w-full items-center justify-end border-t-[1px] pt-3">
-              <button
-                className={`flex items-center rounded-md bg-color-main py-1.5 px-3 text-sm font-medium text-white duration-100 hover:bg-color-main-dark ${
-                  !post && "pointer-events-auto cursor-not-allowed opacity-50"
-                }`}
+          {privacyDropdown && (
+            <div className="absolute left-0 top-[107%] rounded-md border bg-white  py-1 text-xs text-text-sub">
+              <div
+                onClick={() => {
+                  setPrivacy("Friends");
+                  setPrivacyDropdown(false);
+                }}
+                className="mb-1 flex cursor-pointer items-center px-2 py-1 hover:bg-gray-100 hover:text-text-main "
               >
-                <p onClick={handleSubmitPost} className="mr-2">
-                  Share
-                </p>
-                <IoSendOutline />
-              </button>
+                <IoPeopleOutline className="mr-1" /> <p>Friends</p>
+              </div>
+              <div
+                onClick={() => {
+                  setPrivacy("Public");
+                  setPrivacyDropdown(false);
+                }}
+                className="flex cursor-pointer items-center py-1 px-2 hover:bg-gray-100 hover:text-text-main"
+              >
+                <IoGlobeOutline className="mr-1" /> <p>Public</p>
+              </div>
             </div>
           )}
+        </div>
+      </div>
+      <div className="0 flex flex-1 flex-col md:ml-2 ">
+        <textarea
+          className="mb-2  max-h-20 resize-none rounded-xl border border-none   py-2   px-3  text-sm text-text-main  outline-none duration-100 ease-in-out  placeholder:text-sm placeholder:font-light  "
+          placeholder="What's Poppin? Share thoughts"
+          value={post}
+          ref={textAreaRef}
+          onChange={handleChange}
+        ></textarea>
+
+        <div className="flex w-full items-center justify-end">
+          <div className="mr-2 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-gray-50 text-lg text-color-main duration-75 ease-in-out hover:bg-slate-200">
+            <IoCamera />
+          </div>
+          <div className="mr-2 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-gray-50 text-lg text-color-main duration-75 ease-in-out hover:bg-slate-200">
+            <IoDocument />
+          </div>
+          <button
+            onClick={handleSubmitPost}
+            className={`flex items-center rounded-full bg-color-main py-1.5 px-4 text-sm font-medium text-white duration-100 hover:bg-color-main-dark ${
+              !post && "pointer-events-auto cursor-not-allowed opacity-50"
+            }`}
+          >
+            <p>Share</p>
+          </button>
         </div>
       </div>
     </div>

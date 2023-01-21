@@ -2,8 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+
 body {
-  font-family: "Raleway", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 
@@ -22,11 +23,11 @@ body {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #5E865A;
+  background: #7cacf5;
   border-radius: 100px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #466443;
+  background: #608bca;
 }

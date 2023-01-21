@@ -9,7 +9,7 @@ const Messages: NextPage = () => {
   return (
     <div className="h-full">
       <Head>
-        <title>Friends | SocMed</title>
+        <title>Friends | CreatVe</title>
       </Head>
       <div className="flex  flex-col items-start justify-start bg-gray-100">
         <div className="flex h-screen w-full flex-col ">
