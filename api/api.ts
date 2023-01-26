@@ -46,6 +46,18 @@ export const POST = async (
   return res;
 };
 
+// @Delete
+export const DELETE = async (
+  route: string,
+  token: string
+): Promise<AxiosResponse | null> => {
+  const res = await api.delete(route, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  return res;
+};
+
 // @Get
 export const GET = async (
   route: string,

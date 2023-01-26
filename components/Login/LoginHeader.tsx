@@ -21,7 +21,7 @@ const LoginHeader = (): ReactElement => {
 
   return (
     <header
-      className={`sticky top-0 flex h-[60px] w-full items-center  px-3  md:px-[10%] ${
+      className={`sticky top-0 z-10 flex h-[60px] w-full items-center  px-3  md:px-[10%] ${
         isScrolled && "bg-white bg-opacity-95 shadow-md"
       }`}
     >
