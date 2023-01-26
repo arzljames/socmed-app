@@ -64,25 +64,25 @@ export const CHAT_STATUS = [
 ];
 
 export const REACTIONS_EMOJI = [
-  { id: 1, name: "Like", reaction: "👍" },
+  { id: 1, reaction: "Like", reaction_icon: "👍" },
   {
     id: 2,
-    name: "Love",
-    reaction: "😍",
+    reaction: "Love",
+    reaction_icon: "😍",
   },
   {
     id: 3,
-    name: "Haha",
-    reaction: "😂",
+    reaction: "Haha",
+    reaction_icon: "😂",
   },
   {
     id: 4,
-    name: "Sad",
-    reaction: "😞",
+    reaction: "Sad",
+    reaction_icon: "😞",
   },
   {
     id: 5,
-    name: "Angry",
-    reaction: "😠",
+    reaction: "Angry",
+    reaction_icon: "😠",
   },
 ];

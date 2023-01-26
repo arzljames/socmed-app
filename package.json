@@ -17,7 +17,8 @@
     "react-icons": "^4.7.1",
     "react-loader-spinner": "^5.3.4",
     "react-time-ago": "^7.2.1",
-    "react-tooltip": "^5.5.2"
+    "react-tooltip": "^5.5.2",
+    "socket.io-client": "^4.5.4"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.191",

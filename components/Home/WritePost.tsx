@@ -40,6 +40,7 @@ const WritePost = (): ReactElement => {
       const res = await POST("/api/post/create", user.access_token, {
         message: post,
         author: user._id,
+        privacy,
       });
 
       useRefreshData(router);
@@ -55,7 +56,9 @@ const WritePost = (): ReactElement => {
       <div className="mb-2 flex  w-full items-center ">
         <ProfileAvatar />
         <div className="relative flex flex-col items-start ">
-          <TextFeedName>Arzl James Lao</TextFeedName>
+          <TextFeedName>
+            {user.profile.first_name + " " + user.profile.last_name}
+          </TextFeedName>
           <div
             onClick={() => setPrivacyDropdown(!privacyDropdown)}
             className=" mt-1 flex cursor-pointer items-center rounded-md bg-gray-100 py-1 px-2 hover:bg-gray-200"

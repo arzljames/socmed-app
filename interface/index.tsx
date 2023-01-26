@@ -32,10 +32,24 @@ export interface UserLoggedInProps {
   is_verified: boolean;
   status: string;
   is_new_user: boolean;
-  created_at: Date | null;
-  updated_at: Date | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
   access_token: string;
   profile: UserProfileLoggedInProps;
+  friend_list: FriendList[];
+}
+
+export interface FriendList {
+  email: string;
+  friend_status: number;
+  is_new_user: boolean;
+  is_vertified: boolean;
+  profile: UserProfileLoggedInProps;
+  status: string;
+  createdAt?: Date | null;
+  updatedAt?: Date | null;
+  username: string;
+  _id: string;
 }
 
 export interface UserProfileLoggedInProps {
@@ -47,8 +61,8 @@ export interface UserProfileLoggedInProps {
   profile_color: string;
   profile_photo?: ProfilePhoto;
   cover_photo?: CoverPhoto;
-  created_at: Date | null;
-  updated_at: Date | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
 }
 
 export interface ProfilePhoto {
