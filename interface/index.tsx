@@ -21,7 +21,7 @@ export interface IsCommentingProps {
 }
 
 export interface SessionProps {
-  _id: string;
+  _id?: string;
   access_token: string;
 }
 

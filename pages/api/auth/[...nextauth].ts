@@ -13,8 +13,7 @@ export const authOptions = {
       },
 
       async authorize(
-        credentials: Record<string, string>,
-        req
+        credentials: Record<string, string>
       ): Promise<any | null> {
         const res = await fetch(`${API_SERVER_DEV}/api/auth/login`, {
           method: "POST",

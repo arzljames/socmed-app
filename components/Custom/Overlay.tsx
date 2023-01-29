@@ -1,17 +1,25 @@
-import { ReactElement } from "react";
+import { Dispatch, ReactElement, ReactNode, SetStateAction } from "react";
 
 const Overlay = ({
   setIsOverlay,
+  setDeleteModal,
+  setIsPreview,
   children,
 }: {
-  setIsOverlay?: any;
-  children: any;
+  setIsOverlay?: Dispatch<SetStateAction<Boolean>>;
+  setDeleteModal?: Dispatch<SetStateAction<Boolean>>;
+  setIsPreview?: Dispatch<
+    SetStateAction<{
+      isPreview: Boolean;
+      fileToPreview: File;
+    }>
+  >;
+  children: ReactNode;
 }): ReactElement => {
   const handleCloseOverlay = () => {
-    if (setIsOverlay) {
-      setIsOverlay(false);
-    }
-
+    if (setIsOverlay) setIsOverlay(false);
+    if (setDeleteModal) setDeleteModal(false);
+    if (setIsPreview) setIsPreview({ isPreview: false, fileToPreview: null });
     return;
   };
   return (

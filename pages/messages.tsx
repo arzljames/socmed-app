@@ -1,4 +1,5 @@
-import { NextPage } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
+import { getSession } from "next-auth/react";
 import Head from "next/head";
 import Header from "../components/Home/Header";
 import Navbar from "../components/Home/Navbar";
@@ -30,3 +31,21 @@ const Messages: NextPage = () => {
 };
 
 export default Messages;
+
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getSession(context);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

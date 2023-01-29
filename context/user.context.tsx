@@ -1,4 +1,5 @@
-import { createContext, useState } from "react";
+import { useSession } from "next-auth/react";
+import { createContext, useEffect, useState } from "react";
 import {
   CoverPhoto,
   ProfilePhoto,
@@ -41,9 +42,12 @@ export const UserDataProvider = ({ children }: ReactChildrenProps) => {
   });
 
   const [posts, setPosts] = useState([]);
+  const [token, setToken] = useState<string>("");
 
   return (
-    <UserDataContext.Provider value={{ user, setUser, posts, setPosts }}>
+    <UserDataContext.Provider
+      value={{ user, setUser, posts, setPosts, token, setToken }}
+    >
       {children}
     </UserDataContext.Provider>
   );

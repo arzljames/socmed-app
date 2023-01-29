@@ -1,12 +1,13 @@
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import useUserData from "../../hooks/useUserData";
 import ProfileAvatar from "./ProfileAvatar";
 import { IoCameraOutline, IoPencil } from "react-icons/io5";
 
 const ProfileCard = (): ReactElement => {
-  const { user } = useUserData() as any;
+  const { user, posts } = useUserData() as any;
   const name = user.profile.first_name + " " + user.profile.last_name;
   const username = user.username;
+
   return (
     <div className="border-color-bg-dark relative   mb-4 w-full flex-col  rounded-xl border bg-white">
       <div className="relative flex h-24 items-center justify-center overflow-hidden rounded-t-xl bg-slate-200">
@@ -26,11 +27,19 @@ const ProfileCard = (): ReactElement => {
       </div>
       <div className="flex border-b-[1px] py-2">
         <div className="flex flex-1 flex-col items-center justify-center border-r-[1px] ">
-          <h4 className="font-lg font-semibold text-text-main">3</h4>
+          <h4 className="font-lg font-semibold text-text-main">
+            {
+              posts?.filter((item: any) => {
+                return item.author._id === user._id;
+              }).length
+            }
+          </h4>
           <p className="text-sm text-text-sub">Posts</p>
         </div>
         <div className="flex flex-1 flex-col items-center justify-center text-sm">
-          <h4 className="font-lg font-semibold text-text-main">4</h4>{" "}
+          <h4 className="font-lg font-semibold text-text-main">
+            {user.friend_list?.length}
+          </h4>
           <p className="text-sm text-text-sub">Friends</p>
         </div>
       </div>
