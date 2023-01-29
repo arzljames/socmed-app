@@ -1,13 +1,12 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { IoThumbsUpOutline } from "react-icons/io5";
 import { DELETE, POST } from "../../../api/api";
 import useUserData from "../../../hooks/useUserData";
-import _, { find } from "lodash";
+import _ from "lodash";
 import { useRouter } from "next/router";
 import useRefreshData from "../../../hooks/useRefreshData";
 import { REACTIONS_EMOJI } from "../../../const";
-import { Tooltip } from "react-tooltip";
-import { socket } from "../../../utils/socket";
+import Error from "next/error";
 
 const ButtonLike = ({
   findReaction,
@@ -16,7 +15,7 @@ const ButtonLike = ({
   findReaction: any;
   data: any;
 }): ReactElement => {
-  const { user, setPosts, posts } = useUserData() as any;
+  const { user, token } = useUserData() as any;
   const router = useRouter();
   const [isHover, setIsHover] = useState<Boolean>(false);
 
@@ -28,7 +27,7 @@ const ButtonLike = ({
     reaction: string;
   }) => {
     try {
-      const res = await POST(`/api/post/reaction`, user.access_token, {
+      const res = await POST(`/api/post/reaction`, token, {
         reactor: user._id,
         reaction_icon,
         reaction,
@@ -40,22 +39,39 @@ const ButtonLike = ({
     } catch (error) {}
   };
 
-  const handleRemoveReact = async (reactionId?: string) => {
-    if (!reactionId) return;
-    try {
-      const res = await DELETE(
-        `/api/post/remove-reaction/${reactionId}`,
-        user.access_token
-      );
-      useRefreshData(router);
-      setIsHover(false);
-      return res;
-    } catch (error) {}
+  const handleDefaultReact = async (reactionId?: string) => {
+    if (!reactionId) {
+      try {
+        const res = await POST("/api/post/reaction/", token, {
+          reactor: user._id,
+          reaction_icon: "👍",
+          reaction: "Like",
+          postId: data._id,
+        });
+        useRefreshData(router);
+        setIsHover(false);
+        return res;
+      } catch (error) {
+        throw new Error(error);
+      }
+    } else {
+      try {
+        const res = await DELETE(
+          `/api/post/remove-reaction/${reactionId}`,
+          token
+        );
+        useRefreshData(router);
+        setIsHover(false);
+        return res;
+      } catch (error) {
+        throw new Error(error);
+      }
+    }
   };
 
   return (
     <div
-      onClick={() => handleRemoveReact(findReaction?._id)}
+      onClick={() => handleDefaultReact(findReaction?._id)}
       onMouseEnter={() => {
         setIsHover(true);
       }}

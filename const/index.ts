@@ -23,7 +23,7 @@ export const HOME_MOBILE_NAV = [
     name: "Home Feed",
     iconActive: IoHome,
     iconInactive: IoHomeOutline,
-    path: "/",
+    path: "/homefeed",
   },
 
   {
@@ -85,4 +85,10 @@ export const REACTIONS_EMOJI = [
     reaction: "Angry",
     reaction_icon: "😠",
   },
+];
+
+export const ALLOWED_ATTACHMENT_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
 ];
