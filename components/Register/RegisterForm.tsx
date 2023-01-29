@@ -1,6 +1,6 @@
 import { ReactElement, useState } from "react";
 import Link from "next/link";
-import { postLogin, postRegister } from "../../api/api";
+import { postLogin, postRegister } from "../../utils/api/api";
 import Error from "next/error";
 import {
   AccountRegisterProps,
