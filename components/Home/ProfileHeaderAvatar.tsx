@@ -8,8 +8,8 @@ const ProfileHeaderAvatar = ({
   isSignOutOpen,
 }: ProfileAvatarProps): ReactElement => {
   const { user } = useUserData() as any;
-  const profileColor: string = user.profile.profile_color;
-  const initials: string = user.profile.initials;
+  const profileColor: string = user.profile?.profile_color;
+  const initials: string = user.profile?.initials;
   const profilePhoto: string = user.profile?.profile_photo;
 
   const handleDropDown = () => {
