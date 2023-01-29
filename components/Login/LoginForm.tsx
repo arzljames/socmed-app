@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { postLogin } from "../../api/api";
+import { postLogin } from "../../utils/api/api";
 import Overlay from "../Custom/Overlay";
 import LoginLoader from "./LoginLoader";
 import { IoEyeOff, IoEye } from "react-icons/io5";
