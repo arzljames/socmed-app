@@ -9,7 +9,7 @@ import {
 import { FaTimes } from "react-icons/fa";
 import ProfileAvatar from "./ProfileAvatar";
 import useUserData from "../../hooks/useUserData";
-import { POST } from "../../api/api";
+import { POST } from "../../utils/api/api";
 import { useRouter } from "next/router";
 import TextFeedName from "../Custom/Text/TextFeedName";
 import useRefreshData from "../../hooks/useRefreshData";
@@ -127,7 +127,7 @@ const WritePost = (): ReactElement => {
         <ProfileAvatar />
         <div className="relative flex flex-col items-start ">
           <TextFeedName>
-            {user.profile.first_name + " " + user.profile.last_name}
+            {user?.profile?.first_name + " " + user?.profile?.last_name}
           </TextFeedName>
           <div
             onClick={(e) => {

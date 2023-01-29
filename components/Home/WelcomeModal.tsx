@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import { HiOutlineArrowNarrowRight } from "react-icons/hi";
-import { PUT } from "../../api/api";
+import { PUT } from "../../utils/api/api";
 import useRefreshData from "../../hooks/useRefreshData";
 import useUserData from "../../hooks/useUserData";
 import { UserLoggedInProps } from "../../interface";
