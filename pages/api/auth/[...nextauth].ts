@@ -15,7 +15,7 @@ export const authOptions = {
       async authorize(
         credentials: Record<string, string>
       ): Promise<any | null> {
-        const res = await fetch(`${API_SERVER_DEV}/api/auth/login`, {
+        const res = await fetch(`${API_SERVER}/api/auth/login`, {
           method: "POST",
           body: JSON.stringify(credentials),
           headers: { "Content-Type": "application/json" },
