@@ -15,7 +15,7 @@ import {
   IoSend,
   IoWarning,
 } from "react-icons/io5";
-import { DELETE, POST } from "../../api/api";
+import { DELETE, POST } from "../../utils/api/api";
 import Error from "next/error";
 import ProfileAvatar from "./ProfileAvatar";
 import Overlay from "../Custom/Overlay";

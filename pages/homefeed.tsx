@@ -10,7 +10,7 @@ import Feed from "../components/Home/Feed";
 import { getSession } from "next-auth/react";
 import { RedirectRoute } from "../utils/RedirectRoute";
 import { SessionProps, UserLoggedInProps } from "../interface";
-import { GET } from "../api/api";
+import { GET } from "../utils/api/api";
 import { AxiosResponse } from "axios";
 import useUserData from "../hooks/useUserData";
 import WelcomeModal from "../components/Home/WelcomeModal";

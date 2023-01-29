@@ -2,7 +2,7 @@ import { useSession } from "next-auth/react";
 import useUserData from "../hooks/useUserData";
 import { ReactChildrenProps, SessionProps } from "../interface";
 import { useEffect } from "react";
-import { GET } from "../api/api";
+import { GET } from "../utils/api/api";
 
 const Layer = ({ children }: ReactChildrenProps) => {
   const { data: session } = useSession();

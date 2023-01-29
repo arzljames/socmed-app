@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from "react";
 import { IoThumbsUpOutline } from "react-icons/io5";
-import { DELETE, POST } from "../../../api/api";
+import { DELETE, POST } from "../../../utils/api/api";
 import useUserData from "../../../hooks/useUserData";
 import _ from "lodash";
 import { useRouter } from "next/router";

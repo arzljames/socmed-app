@@ -1,7 +1,7 @@
 import axios, { Axios, AxiosResponse } from "axios";
 import { signIn, SignInResponse } from "next-auth/react";
-import { API_SERVER, API_SERVER_DEV } from "../const";
-import { LoginPayloadProps } from "../interface";
+import { API_SERVER, API_SERVER_DEV } from "../../const";
+import { LoginPayloadProps } from "../../interface";
 axios.defaults.withCredentials = true;
 
 export const api = axios.create({
