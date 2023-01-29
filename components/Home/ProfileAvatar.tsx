@@ -20,7 +20,7 @@ const ProfileAvatar = ({
     <div
       className={`mr-2 flex ${h ? h : "h-9"} ${
         w ? w : "w-9"
-      } items-center justify-center rounded-full ${profileColor} cursor-pointer `}
+      } items-center justify-center rounded-full ${profileColor} cursor-pointer`}
     >
       {!profilePhoto ? (
         <p className={`font-semibold text-white ${ts && ts}`}>{initials}</p>

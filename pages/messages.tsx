@@ -1,4 +1,5 @@
-import { NextPage } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
+import { getSession } from "next-auth/react";
 import Head from "next/head";
 import Header from "../components/Home/Header";
 import Navbar from "../components/Home/Navbar";
@@ -9,7 +10,7 @@ const Messages: NextPage = () => {
   return (
     <div className="h-full">
       <Head>
-        <title>Friends | SocMed</title>
+        <title>Chat Messages | CreatVe</title>
       </Head>
       <div className="flex  flex-col items-start justify-start bg-gray-100">
         <div className="flex h-screen w-full flex-col ">
@@ -17,9 +18,11 @@ const Messages: NextPage = () => {
             <Header />
             <Navbar />
           </div>
-          <div className="flex  w-full flex-1  overflow-hidden">
+          <div className="flex h-full w-full flex-1 overflow-hidden px-3  md:px-[10%]">
             <Sidebar />
-            <MessageChat />
+            <div className="flex h-full w-full flex-1 flex-col items-start justify-start overflow-y-auto bg-transparent py-5  scrollbar-thin md:ml-1 md:mr-3 ">
+              {/* <MessageChat /> */}
+            </div>
           </div>
         </div>
       </div>
@@ -28,3 +31,21 @@ const Messages: NextPage = () => {
 };
 
 export default Messages;
+
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getSession(context);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

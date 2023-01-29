@@ -1,12 +1,11 @@
 import axios, { Axios, AxiosResponse } from "axios";
 import { signIn, SignInResponse } from "next-auth/react";
+import { API_SERVER, API_SERVER_DEV } from "../const";
 import { LoginPayloadProps } from "../interface";
 axios.defaults.withCredentials = true;
 
-const apiServer = "https://api-socmed.onrender.com";
-
 export const api = axios.create({
-  baseURL: apiServer,
+  baseURL: API_SERVER,
   withCredentials: true,
 });
 
@@ -15,7 +14,7 @@ export const api = axios.create({
 export const postLogin = async (
   credentials: string,
   payload: LoginPayloadProps
-): Promise<SignInResponse> => {
+): Promise<SignInResponse | null> => {
   const res = await signIn(credentials, {
     redirect: false,
     username: payload.username,
@@ -26,11 +25,20 @@ export const postLogin = async (
   return res;
 };
 
-export const postReaction = async (
+export const postRegister = async (
+  route: string,
+  payload: any
+): Promise<AxiosResponse> => {
+  const res = await api.post(route, payload);
+
+  return res;
+};
+
+export const POST = async (
   route: string,
   token: string,
-  payload: { reactor: string; reaction: number }
-): Promise<AxiosResponse> => {
+  payload?: any
+): Promise<AxiosResponse | null> => {
   const res = await api.post(route, payload, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -38,8 +46,20 @@ export const postReaction = async (
   return res;
 };
 
+// @Delete
+export const DELETE = async (
+  route: string,
+  token: string
+): Promise<AxiosResponse | null> => {
+  const res = await api.delete(route, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  return res;
+};
+
 // @Get
-export const getLoginUser = async (
+export const GET = async (
   route: string,
   token: string
 ): Promise<AxiosResponse> => {
@@ -50,13 +70,18 @@ export const getLoginUser = async (
   return res;
 };
 
-export const getPosts = async (
+// @Put
+export const PUT = async (
   route: string,
   token: string
 ): Promise<AxiosResponse> => {
-  const res = await api.get(route, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const res = await api.put(
+    route,
+    { is_new_user: false },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
 
   return res;
 };

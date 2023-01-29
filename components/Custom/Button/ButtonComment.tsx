@@ -1,11 +1,14 @@
-import React, { Dispatch, SetStateAction } from "react";
-import { IoChatboxEllipses, IoChatboxEllipsesOutline } from "react-icons/io5";
-import { IsCommentingProps } from "../../../interface";
+import React from "react";
+import { IoChatboxEllipsesOutline } from "react-icons/io5";
 
-const ButtonComment = ({ setIsCommenting }: IsCommentingProps) => {
+const ButtonComment = ({
+  handleCommentInputRef,
+}: {
+  handleCommentInputRef?: () => void;
+}) => {
   return (
     <div
-      onClick={() => setIsCommenting(true)}
+      onClick={handleCommentInputRef}
       className="mx-2 flex w-[40%] cursor-pointer items-center justify-center rounded-xl border py-3 text-text-sub hover:bg-gray-100"
     >
       <IoChatboxEllipsesOutline />{" "}

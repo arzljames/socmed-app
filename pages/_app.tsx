@@ -4,21 +4,23 @@ import en from "javascript-time-ago/locale/en";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { UserDataProvider } from "../context/user.context";
-import { PostDataProvider } from "../context/post.context";
+import Layer from "../components/Layer";
 
-TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(en);
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+const MyApp = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) => {
   return (
     <SessionProvider session={session}>
       <UserDataProvider>
-        <PostDataProvider>
+        <Layer>
           <Component {...pageProps} />
-        </PostDataProvider>
+        </Layer>
       </UserDataProvider>
     </SessionProvider>
   );
-}
+};
 
 export default MyApp;

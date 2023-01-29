@@ -22,7 +22,8 @@ const ProfileHeaderAvatar = ({
       onClick={handleDropDown}
       className={`mr-2 flex
   h-8 w-8 cursor-pointer items-center justify-center rounded-full ${profileColor} ${
-        isSignOutOpen && "border-2"
+        isSignOutOpen &&
+        "after:absolute after:h-[30px] after:w-[30px] after:rounded-full   after:border-[2px] after:border-white after:content-['']"
       } select-none border-gray-500`}
     >
       {!profilePhoto ? (

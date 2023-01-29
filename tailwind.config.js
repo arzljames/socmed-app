@@ -10,11 +10,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "text-main": "#272727",
+        "text-main": "#363636",
         "text-sub": "#6F6F6F",
-        "color-main": "#5E865A",
-        "color-main-light": "#E2ECE1",
-        "color-main-dark": "#466443",
+        "color-main": "#629AEF",
+        "color-main-2": "#9F57E8",
+        "color-main-light": "#7FB2FF",
+        "color-main-dark": "#5A8DD9",
         "color-border": "#C0C0C0",
         "color-bg": "#EFEFEF",
       },
@@ -36,5 +37,6 @@ module.exports = {
     "bg-amber-500",
     "bg-gray-400",
     "bg-green-500",
+    "text-yellow-500",
   ],
 };

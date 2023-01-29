@@ -1,8 +1,17 @@
-import { ReactElement } from "react";
-import { ReactChildrenProps } from "../../../interface";
+import { ReactElement, ReactNode } from "react";
 
-const TextFeedName = ({ children }: ReactChildrenProps): ReactElement => {
-  return <p className="text-base font-bold text-text-main">{children}</p>;
+const TextFeedName = ({
+  children,
+  style,
+}: {
+  children: ReactNode;
+  style?: string;
+}): ReactElement => {
+  return (
+    <p className={`text-sm font-semibold text-text-main ${style && style}`}>
+      {children}
+    </p>
+  );
 };
 
 export default TextFeedName;
