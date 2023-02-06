@@ -1,4 +1,4 @@
-import { ReactElement, useRef } from "react";
+import { ReactElement, useEffect, useRef } from "react";
 import {
   IoSearchOutline,
   IoNotificationsOutline,
@@ -7,16 +7,16 @@ import {
 import { useState } from "react";
 import NotificationPanel from "./NotificationPanel";
 import useOnClickOutside from "../../hooks/useOnClickOutside";
-
 import ProfileHeaderAvatar from "./ProfileHeaderAvatar";
 import SignOutDropdown from "./SignOutDropdown";
 import Link from "next/link";
+import useUserData from "../../hooks/useUserData";
 
 const Header = (): ReactElement => {
   const ref = useRef();
   const [isNotificationOpen, setIsNotificationOpen] = useState<Boolean>(false);
   const [isSignOutOpen, setIsSignOutOpen] = useState<Boolean>(false);
-
+  const { notifications } = useUserData() as any;
   useOnClickOutside(ref, () => setIsNotificationOpen(false));
 
   const handleDropDown = () => {
@@ -30,14 +30,10 @@ const Header = (): ReactElement => {
         "flex h-[60px] w-full items-center justify-between bg-white  px-3 shadow-md sm:px-10 md:px-[10%]"
       }
     >
-      <Link href="/">
-        <img className="h-9" src="/logo-dark.svg" alt="SocMed" />
+      <Link href="/homefeed">
+        <img className="h-9" src="/logo-dark.svg" alt="CreatVe" />
       </Link>
-      {/* <input
-        type="search"
-        className="hidden h-8  rounded-full bg-gray-100 px-4 text-sm outline-none placeholder:text-xs md:flex md:w-1/3"
-        placeholder="#Search and discover things in SocMed"
-      /> */}
+
       <div className="flex items-center justify-end">
         <div className="mr-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 md:hidden">
           <IoSearchOutline className="text-gray-800" fontSize={20} />
@@ -48,9 +44,13 @@ const Header = (): ReactElement => {
             isNotificationOpen ? "bg-gray-200" : "bg-white"
           }`}
         >
-          <div className="absolute top-[-2px] right-[-2px] flex h-5 w-6 items-center justify-center rounded-full border-2  border-white bg-red-500 text-xs font-semibold text-white">
-            9+
-          </div>
+          {notifications?.meta?.total_unread !== 0 && (
+            <div className="absolute top-[-2px] right-[-2px] flex h-5 w-6 items-center justify-center rounded-full border-2  border-white bg-red-500 text-xs font-semibold text-white">
+              {notifications?.meta?.total_unread > 9
+                ? "9+"
+                : notifications?.meta?.total_unread}
+            </div>
+          )}
           {isNotificationOpen ? (
             <IoNotifications className="text-gray-800" fontSize={20} />
           ) : (

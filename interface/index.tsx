@@ -25,18 +25,28 @@ export interface SessionProps {
   access_token: string;
 }
 
+export interface CreateNotificationProps {
+  notification_type: string;
+  notification: string;
+  notify_to: string;
+  notify_by: string;
+  link: string;
+  reaction_icon?: string;
+  post_id?: string;
+}
+
 export interface UserLoggedInProps {
   _id: string;
-  email: string;
   username: string;
-  is_verified: boolean;
-  status: string;
+  email: string;
   is_new_user: boolean;
+  status: string;
+  profile: UserProfileLoggedInProps;
+  friend_list: any[];
   createdAt: Date | null;
   updatedAt: Date | null;
-  access_token: string;
-  profile: UserProfileLoggedInProps;
-  friend_list: FriendList[];
+  is_verified: boolean;
+  access_token?: string;
 }
 
 export interface FriendList {
@@ -59,8 +69,8 @@ export interface UserProfileLoggedInProps {
   middle_name?: string;
   initials: string;
   profile_color: string;
-  profile_photo?: ProfilePhoto;
-  cover_photo?: CoverPhoto;
+  profile_photo?: any;
+  cover_photo?: any;
   createdAt: Date | null;
   updatedAt: Date | null;
 }

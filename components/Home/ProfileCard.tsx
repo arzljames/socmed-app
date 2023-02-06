@@ -2,11 +2,16 @@ import { ReactElement, useEffect } from "react";
 import useUserData from "../../hooks/useUserData";
 import ProfileAvatar from "./ProfileAvatar";
 import { IoCameraOutline, IoPencil } from "react-icons/io5";
+import { UserLoggedInProps } from "../../interface";
+import _ from "lodash";
 
 const ProfileCard = (): ReactElement => {
-  const { user, posts } = useUserData() as any;
-  const name = user.profile.first_name + " " + user.profile.last_name;
-  const username = user.username;
+  const { user, posts } = useUserData() as {
+    user: UserLoggedInProps;
+    posts: any;
+  };
+  const name = user?.profile?.first_name + " " + user?.profile?.last_name;
+  const username = user?.username;
 
   return (
     <div className="border-color-bg-dark relative   mb-4 w-full flex-col  rounded-xl border bg-white">
@@ -29,7 +34,7 @@ const ProfileCard = (): ReactElement => {
         <div className="flex flex-1 flex-col items-center justify-center border-r-[1px] ">
           <h4 className="font-lg font-semibold text-text-main">
             {
-              posts?.filter((item: any) => {
+              _.filter(posts?.data, (item: any) => {
                 return item.author._id === user._id;
               }).length
             }
@@ -38,7 +43,7 @@ const ProfileCard = (): ReactElement => {
         </div>
         <div className="flex flex-1 flex-col items-center justify-center text-sm">
           <h4 className="font-lg font-semibold text-text-main">
-            {user.friend_list?.length}
+            {user?.friend_list?.length}
           </h4>
           <p className="text-sm text-text-sub">Friends</p>
         </div>
