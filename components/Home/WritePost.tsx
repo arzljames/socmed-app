@@ -9,20 +9,24 @@ import {
 import { FaTimes } from "react-icons/fa";
 import ProfileAvatar from "./ProfileAvatar";
 import useUserData from "../../hooks/useUserData";
-import { POST } from "../../api/api";
-import { useRouter } from "next/router";
+import { createPosts, uploadCloudinary } from "../../utils/api/api";
 import TextFeedName from "../Custom/Text/TextFeedName";
-import useRefreshData from "../../hooks/useRefreshData";
 import Error from "next/error";
 import CustomLoader from "../Custom/Loader";
 import _ from "lodash";
-import { ALLOWED_ATTACHMENT_TYPES } from "../../const";
 import Overlay from "../Custom/Overlay";
-import GenerateId from "../../utils/GenerateId";
+import { UserLoggedInProps } from "../../interface";
+import AttachmentWarningModal from "./AttachmentWarningModal";
+import { socket } from "../../utils/socket";
+import {
+  ATTACHMENT_MAX_SIZE,
+  ALLOWED_ATTACHMENT_TYPES,
+} from "../../const/index";
 
 const WritePost = (): ReactElement => {
   const [post, setPost] = useState<string>("");
-  const [isPosting, setIsPosting] = useState<Boolean>(false);
+  const [isPosting, setIsPosting] = useState<boolean>(false);
+  const [warning, setWarning] = useState<boolean>(false);
   const [previewFull, setPreviewFull] = useState<{
     isPreview: Boolean;
     fileToPreview: File;
@@ -30,11 +34,16 @@ const WritePost = (): ReactElement => {
     isPreview: false,
     fileToPreview: null,
   });
-  const [privacyDropdown, setPrivacyDropdown] = useState<Boolean>(false);
+  const [privacyDropdown, setPrivacyDropdown] = useState<boolean>(false);
   const [privacy, setPrivacy] = useState<string>("Friends");
-  const [attachments, setAttachments] = useState<any[]>([]);
+  const [attachments, setAttachments] = useState<File | null>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const { user, token } = useUserData() as any;
+  const { user, token, attachmentWarning, setPosts } = useUserData() as {
+    user: UserLoggedInProps;
+    token: string;
+    attachmentWarning: boolean;
+    setPosts: any;
+  };
 
   useAutosizeTextArea(textAreaRef.current, post);
 
@@ -55,8 +64,6 @@ const WritePost = (): ReactElement => {
     }
   };
 
-  const router = useRouter();
-
   const handleChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = evt.target?.value;
 
@@ -68,25 +75,25 @@ const WritePost = (): ReactElement => {
     // to prevent double posting
     if (isPosting) return;
 
-    // setIsPosting(true);
+    setIsPosting(true);
     try {
       // append image to form data as an array
-      let attachmentFiles = [];
 
-      for (let i = 0; i < attachments.length; i++) {
-        attachmentFiles.push(attachments[i].image);
-      }
-
-      const res = await POST("/api/post/create", token, {
+      let url: string = "";
+      if (attachments) url = await uploadCloudinary(attachments);
+      const res = await createPosts(token, {
         message: post,
-        author: user._id,
         privacy,
-        attachments: attachmentFiles,
+        attachments: url && {
+          url,
+          type: attachments?.type,
+        },
       });
-      useRefreshData(router);
       setPost("");
-      setAttachments([]);
+      setAttachments(null);
       setIsPosting(false);
+      socket.emit("client:refresh_data");
+
       return res;
     } catch (error) {
       setIsPosting(false);
@@ -95,23 +102,24 @@ const WritePost = (): ReactElement => {
   };
 
   // handler for removing attachment
-  const handleRemoveAttachment = (id: string) => {
-    setAttachments(
-      _.filter(attachments, (file: any) => {
-        return file.id !== id;
-      })
-    );
+  const handleRemoveAttachment = () => {
+    inputFileRef.current.value = null;
+    setAttachments(null);
   };
 
   // handler for removing attachment
   const handleAddAttachement = (event: any) => {
-    let filesArr: any = [];
-    for (let i = 0; i < event.target.files.length; i++) {
-      if (!_.includes(ALLOWED_ATTACHMENT_TYPES, event.target.files[i].type))
-        return alert("Only .jpeg, .png, and .jpg type of files are allowed.");
-      filesArr.push({ image: event.target.files[i], id: GenerateId() });
+    if (event.target.files[0]?.size > ATTACHMENT_MAX_SIZE)
+      return alert("Attachment maximum size is 8mb only");
+    if (!_.includes(ALLOWED_ATTACHMENT_TYPES, event.target.files[0]?.type))
+      return alert(
+        "Attachment file can only be .jpeg, .jpg, .png, .mp4, and .mkv"
+      );
+
+    setAttachments(event.target.files[0]);
+    if (attachmentWarning) {
+      setWarning(true);
     }
-    setAttachments([...attachments, ...filesArr]);
   };
 
   const handleViewFullSize = (file: File) => {
@@ -127,7 +135,7 @@ const WritePost = (): ReactElement => {
         <ProfileAvatar />
         <div className="relative flex flex-col items-start ">
           <TextFeedName>
-            {user.profile.first_name + " " + user.profile.last_name}
+            {user?.profile?.first_name + " " + user?.profile?.last_name}
           </TextFeedName>
           <div
             onClick={(e) => {
@@ -140,13 +148,13 @@ const WritePost = (): ReactElement => {
             <IoCaretDown className="text-xs  text-text-main" />
           </div>
           {privacyDropdown && (
-            <div className="absolute left-0 top-[107%] rounded-md border bg-white  py-1 text-xs text-text-sub">
+            <div className="absolute left-0 top-[107%] z-10 min-w-[100px] rounded-md border bg-white py-1 text-xs text-text-sub">
               <div
                 onClick={() => {
                   setPrivacy("Friends");
                   setPrivacyDropdown(false);
                 }}
-                className="mb-1 flex cursor-pointer items-center px-2 py-1 hover:bg-gray-100 hover:text-text-main "
+                className=" mb-1 flex cursor-pointer items-center px-2 py-2 hover:bg-gray-100 hover:text-text-main "
               >
                 <IoPeopleOutline className="mr-1" /> <p>Friends</p>
               </div>
@@ -155,7 +163,7 @@ const WritePost = (): ReactElement => {
                   setPrivacy("Public");
                   setPrivacyDropdown(false);
                 }}
-                className="flex cursor-pointer items-center py-1 px-2 hover:bg-gray-100 hover:text-text-main"
+                className="flex cursor-pointer items-center py-2 px-2 hover:bg-gray-100 hover:text-text-main"
               >
                 <IoGlobeOutline className="mr-1" /> <p>Public</p>
               </div>
@@ -172,32 +180,36 @@ const WritePost = (): ReactElement => {
           ref={textAreaRef}
           onChange={handleChange}
         ></textarea>
-        {!_.isEmpty(attachments) && (
+        {attachments && (
           <div className="flex flex-wrap">
-            {_.map(attachments, (image: any, index: number) => {
-              return (
-                <div
-                  onClick={() => handleViewFullSize(image.image)}
-                  className="group relative mb-2 mr-2 flex h-24 w-24 cursor-pointer  items-center justify-center rounded-lg border bg-white shadow-md"
-                  key={index}
-                >
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveAttachment(image.id);
-                    }}
-                    className="absolute top-[-8px] right-[-8px] hidden h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-color-main text-xs text-white duration-100 group-hover:flex hover:bg-color-main-dark"
-                  >
-                    <FaTimes />
-                  </span>
-                  <img
-                    className="w-ful flex h-full rounded-lg object-fill object-center"
-                    src={URL.createObjectURL(image.image)}
-                    alt={image.name}
-                  />
-                </div>
-              );
-            })}
+            <div
+              onClick={() => handleViewFullSize(attachments)}
+              className=" relative mb-2 mr-2 flex h-24 w-24 cursor-pointer  items-center justify-center rounded-lg border bg-white shadow-md"
+            >
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveAttachment();
+                }}
+                className="absolute top-[-8px] right-[-8px] z-10 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-color-main text-xs text-white duration-100  hover:bg-color-main-dark"
+              >
+                <FaTimes />
+              </span>
+              {attachments.type === "video/mp4" ||
+              attachments.type === "video/x-matroska" ? (
+                <video
+                  className="w-ful flex h-full rounded-lg object-fill object-center"
+                  src={URL.createObjectURL(attachments)}
+                  controls
+                />
+              ) : (
+                <img
+                  className="w-ful flex h-full rounded-lg object-fill object-center"
+                  src={URL.createObjectURL(attachments)}
+                  alt={attachments.name}
+                />
+              )}
+            </div>
           </div>
         )}
 
@@ -206,10 +218,9 @@ const WritePost = (): ReactElement => {
             ref={inputFileRef}
             type="file"
             className="pointer-events-none hidden"
-            onChange={(event) => {
+            onInput={(event) => {
               handleAddAttachement(event);
             }}
-            multiple
           />
           <div
             onClick={onInputFileRefClick}
@@ -222,7 +233,7 @@ const WritePost = (): ReactElement => {
             onClick={handleSubmitPost}
             className={`flex items-center rounded-full bg-color-main py-1.5 px-4 text-sm font-medium text-white duration-100 hover:bg-color-main-dark ${
               !post &&
-              _.isEmpty(attachments) &&
+              !attachments &&
               "pointer-events-auto cursor-not-allowed opacity-50"
             }`}
           >
@@ -238,12 +249,27 @@ const WritePost = (): ReactElement => {
             onClick={(e) => e.stopPropagation()}
             className="max-w-md rounded-lg  shadow-2xl"
           >
-            <img
-              className="rounded-lg"
-              src={URL.createObjectURL(previewFull.fileToPreview)}
-              alt={previewFull.fileToPreview.name}
-            />
+            {attachments.type === "video/mp4" ||
+            attachments.type === "video/x-matroska" ? (
+              <video
+                className="w-ful flex h-full rounded-lg object-fill object-center"
+                src={URL.createObjectURL(attachments)}
+                controls
+              />
+            ) : (
+              <img
+                className="w-ful flex h-full rounded-lg object-fill object-center"
+                src={URL.createObjectURL(attachments)}
+                alt={attachments.name}
+              />
+            )}
           </div>
+        </Overlay>
+      )}
+
+      {warning && (
+        <Overlay setWarning={setWarning}>
+          <AttachmentWarningModal setWarning={setWarning} />
         </Overlay>
       )}
     </div>

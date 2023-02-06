@@ -41,12 +41,25 @@ export const UserDataProvider = ({ children }: ReactChildrenProps) => {
     } as UserProfileLoggedInProps,
   });
 
-  const [posts, setPosts] = useState([]);
   const [token, setToken] = useState<string>("");
+  const [attachmentWarning, setAttachmentWarning] = useState<boolean>(false);
+  const [notifications, setNotifications] = useState([]);
+  const [posts, setPosts] = useState([]);
 
   return (
     <UserDataContext.Provider
-      value={{ user, setUser, posts, setPosts, token, setToken }}
+      value={{
+        user,
+        setUser,
+        setNotifications,
+        notifications,
+        token,
+        setToken,
+        setAttachmentWarning,
+        attachmentWarning,
+        posts,
+        setPosts,
+      }}
     >
       {children}
     </UserDataContext.Provider>

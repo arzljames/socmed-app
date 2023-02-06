@@ -4,8 +4,7 @@ import en from "javascript-time-ago/locale/en";
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { UserDataProvider } from "../context/user.context";
-import Layer from "../components/Layer";
-
+import Layout from "../components/Layout";
 TimeAgo.addLocale(en);
 
 const MyApp = ({
@@ -15,9 +14,9 @@ const MyApp = ({
   return (
     <SessionProvider session={session}>
       <UserDataProvider>
-        <Layer>
+        <Layout>
           <Component {...pageProps} />
-        </Layer>
+        </Layout>
       </UserDataProvider>
     </SessionProvider>
   );

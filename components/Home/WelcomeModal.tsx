@@ -1,12 +1,7 @@
 import { useRouter } from "next/router";
-import React, {
-  Dispatch,
-  ReactElement,
-  SetStateAction,
-  useEffect,
-} from "react";
+import React, { Dispatch, ReactElement, SetStateAction } from "react";
 import { HiOutlineArrowNarrowRight } from "react-icons/hi";
-import { PUT } from "../../api/api";
+import { PUT } from "../../utils/api/api";
 import useRefreshData from "../../hooks/useRefreshData";
 import useUserData from "../../hooks/useUserData";
 import { UserLoggedInProps } from "../../interface";

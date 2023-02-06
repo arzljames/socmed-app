@@ -8,15 +8,11 @@ import {
   IoLayersOutline,
   IoLayers,
 } from "react-icons/io5";
-import {
-  BsFillEmojiAngryFill,
-  BsFillEmojiFrownFill,
-  BsFillEmojiHeartEyesFill,
-  BsFillEmojiLaughingFill,
-} from "react-icons/bs";
 
 export const API_SERVER: string = "https://api-socmed.onrender.com/";
 export const API_SERVER_DEV: string = "http://localhost:3001";
+export const CLOUDINARY_URL: string =
+  "https://api.cloudinary.com/v1_1/dedfeuejo/upload";
 
 export const HOME_MOBILE_NAV = [
   {
@@ -91,4 +87,9 @@ export const ALLOWED_ATTACHMENT_TYPES = [
   "image/png",
   "image/jpeg",
   "image/jpg",
+  "video/mp4",
+  "video/x-matroska",
 ];
+
+// 8mb max size for attachment
+export const ATTACHMENT_MAX_SIZE: number = 8388608;
