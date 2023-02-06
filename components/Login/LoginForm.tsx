@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { postLogin } from "../../utils/api/api";
+import { login } from "../../utils/api/api";
 import Overlay from "../Custom/Overlay";
 import LoginLoader from "./LoginLoader";
 import { IoEyeOff, IoEye } from "react-icons/io5";
@@ -31,7 +31,7 @@ const LoginForm = (): ReactElement => {
     setIsLoading(true);
 
     try {
-      const status = await postLogin("credentials", account);
+      const status = await login("credentials", account);
       return router.push(status.url);
     } catch (error) {
       setIsLoading(false);

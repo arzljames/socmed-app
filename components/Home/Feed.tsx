@@ -24,6 +24,8 @@ import CustomLoader from "../Custom/Loader";
 import useRefreshData from "../../hooks/useRefreshData";
 import { useRouter } from "next/router";
 import Comments from "./Comments";
+import { socket } from "../../utils/socket";
+import Link from "next/link";
 
 const Feed = ({ data }: any): ReactElement => {
   const { author } = data as any;
@@ -40,6 +42,7 @@ const Feed = ({ data }: any): ReactElement => {
   const [comment, setComment] = useState<string>("");
   const router = useRouter();
   const commentInputRef = useRef(null);
+  const elementHeight = useRef(null);
 
   const handleComment = async () => {
     if (!comment) return;
@@ -52,6 +55,7 @@ const Feed = ({ data }: any): ReactElement => {
       useRefreshData(router);
       handleShowAllComments();
       setComment("");
+      socket.emit("client:refresh_data");
       return res;
     } catch (error) {
       throw new Error(error);
@@ -67,6 +71,7 @@ const Feed = ({ data }: any): ReactElement => {
         setIsDeleting(false);
         setDeleteModal(false);
       }
+      socket.emit("client:refresh_data");
       return res;
     } catch (error) {
       setIsDeleting(false);
@@ -93,8 +98,8 @@ const Feed = ({ data }: any): ReactElement => {
   };
 
   return (
-    <div className="relative mb-4 flex w-full flex-col rounded-xl bg-white px-3 py-3 shadow-sm md:px-6  md:py-4">
-      <div className="flex">
+    <div className="relative mb-4 flex w-full flex-col rounded-xl bg-white  py-3 shadow-sm   md:py-4">
+      <div className="flex px-3 md:px-6">
         <div
           className={`mr-2 flex  h-9 w-9 items-center justify-center rounded-full ${author.profile.profile_color} cursor-pointer `}
         >
@@ -132,11 +137,32 @@ const Feed = ({ data }: any): ReactElement => {
         </div>
       </div>
       <div>
-        <div>
+        <div className="mb-2 px-3 md:px-6">
           <TextParagraph>{data.message}</TextParagraph>
         </div>
 
-        <div className="mt-4 flex justify-between  py-3">
+        {data?.attachments && (
+          <div className="mb-2 flex items-center justify-center">
+            {data?.attachments.type === "video/mp4" ||
+            data?.attachments.type === "video/x-matroska" ? (
+              <video
+                className="w-full cursor-pointer border-y object-cover"
+                src={data?.attachments?.url}
+                controls
+              />
+            ) : (
+              <Link href={`/homefeed/${data._id}`}>
+                <img
+                  className="w-full cursor-pointer border-y object-cover"
+                  src={data?.attachments?.url}
+                  alt="attachment"
+                />
+              </Link>
+            )}
+          </div>
+        )}
+
+        <div className="flex justify-between px-3 py-2 md:px-6">
           <p className="cursor-pointer text-xs text-text-sub hover:underline  md:text-xs">
             <span className="mr-1 text-base">
               {_.map(
@@ -153,14 +179,14 @@ const Feed = ({ data }: any): ReactElement => {
             </p>
           )}
         </div>
-        <div className="flex">
+        <div className="flex px-3 md:px-6">
           <ButtonLike data={data} findReaction={findReaction} />
           <ButtonComment handleCommentInputRef={handleCommentInputRef} />
           <ButtonShare />
         </div>
 
         {!_.isEmpty(data.comments) && (
-          <div className="my-5 pb-4 pl-4">
+          <div className="my-5 px-3   pl-4 md:px-6">
             <div className="flex justify-end">
               {data.comments.length > 1 && !isShowingAllComments ? (
                 <p
@@ -196,7 +222,7 @@ const Feed = ({ data }: any): ReactElement => {
           </div>
         )}
 
-        <div className=" flex  pt-3">
+        <div className=" mt-4 flex px-3  md:px-6">
           <div className="relative w-full">
             <div className="absolute left-1 top-[50%]  translate-y-[-50%]">
               <ProfileAvatar w="h-7" h="w-7" />
@@ -233,13 +259,13 @@ const Feed = ({ data }: any): ReactElement => {
       >
         <IoEllipsisVertical />
         {optionDropdown && (
-          <div className="absolute right-0 top-[110%] w-20 rounded-lg border bg-white py-1 shadow-sm">
-            <p className="px-2 py-1 text-sm font-medium text-text-sub  hover:bg-slate-100">
+          <div className="absolute right-0 top-[110%] min-w-[100px] rounded-lg border bg-white py-1 shadow-sm">
+            <p className="px-2 py-2 text-sm font-medium text-text-sub  hover:bg-slate-100">
               Edit
             </p>
             <p
               onClick={() => setDeleteModal(true)}
-              className="px-2 py-1 text-sm font-medium text-red-500 hover:bg-red-50"
+              className="px-2 py-2 text-sm font-medium text-red-500 hover:bg-red-50"
             >
               Delete
             </p>

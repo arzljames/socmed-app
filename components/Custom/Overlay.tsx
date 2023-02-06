@@ -4,10 +4,12 @@ const Overlay = ({
   setIsOverlay,
   setDeleteModal,
   setIsPreview,
+  setWarning,
   children,
 }: {
-  setIsOverlay?: Dispatch<SetStateAction<Boolean>>;
-  setDeleteModal?: Dispatch<SetStateAction<Boolean>>;
+  setIsOverlay?: Dispatch<SetStateAction<boolean>>;
+  setDeleteModal?: Dispatch<SetStateAction<boolean>>;
+  setWarning?: Dispatch<SetStateAction<boolean>>;
   setIsPreview?: Dispatch<
     SetStateAction<{
       isPreview: Boolean;
@@ -19,6 +21,7 @@ const Overlay = ({
   const handleCloseOverlay = () => {
     if (setIsOverlay) setIsOverlay(false);
     if (setDeleteModal) setDeleteModal(false);
+    if (setWarning) setWarning(false);
     if (setIsPreview) setIsPreview({ isPreview: false, fileToPreview: null });
     return;
   };

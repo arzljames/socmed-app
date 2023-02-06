@@ -1,6 +1,6 @@
 import { ReactElement, useState } from "react";
 import Link from "next/link";
-import { postLogin, postRegister } from "../../utils/api/api";
+import { register, login } from "../../utils/api/api";
 import Error from "next/error";
 import {
   AccountRegisterProps,
@@ -50,9 +50,9 @@ const RegisterForm = (): ReactElement => {
     try {
       setIsLoading(true);
 
-      await postRegister("/api/auth/register", account);
+      await register("/api/auth/register", account);
 
-      const status = await postLogin("credentials", {
+      const status = await login("credentials", {
         username: account.username,
         password: account.password,
       });

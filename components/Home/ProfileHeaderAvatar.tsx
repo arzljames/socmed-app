@@ -1,16 +1,16 @@
 import { ReactElement, useEffect } from "react";
 import useUserData from "../../hooks/useUserData";
-import { ProfileAvatarProps } from "../../interface";
+import { ProfileAvatarProps, UserLoggedInProps } from "../../interface";
 
 const ProfileHeaderAvatar = ({
   setIsNotificationOpen,
   setIsSignOutOpen,
   isSignOutOpen,
 }: ProfileAvatarProps): ReactElement => {
-  const { user } = useUserData() as any;
-  const profileColor: string = user.profile?.profile_color;
-  const initials: string = user.profile?.initials;
-  const profilePhoto: string = user.profile?.profile_photo;
+  const { user } = useUserData() as { user: UserLoggedInProps };
+  const profileColor: string = user?.profile?.profile_color;
+  const initials: string = user?.profile?.initials;
+  const profilePhoto: string = user?.profile?.profile_photo;
 
   const handleDropDown = () => {
     setIsNotificationOpen(false);
