@@ -11,7 +11,7 @@ import {
 const UserDataContext = createContext({});
 
 export const UserDataProvider = ({ children }: ReactChildrenProps) => {
-  const [user, setUser] = useState<UserLoggedInProps>({
+  const [user, setUser] = useState<any>({
     _id: "",
     email: "",
     username: "",
@@ -38,7 +38,7 @@ export const UserDataProvider = ({ children }: ReactChildrenProps) => {
       } as CoverPhoto,
       created_at: null,
       updated_at: null,
-    } as UserProfileLoggedInProps,
+    },
   });
 
   const [token, setToken] = useState<string>("");
