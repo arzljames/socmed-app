@@ -4,7 +4,7 @@ import { HiOutlineArrowNarrowRight } from "react-icons/hi";
 import { PUT } from "../../utils/api/api";
 import useRefreshData from "../../hooks/useRefreshData";
 import useUserData from "../../hooks/useUserData";
-import { UserLoggedInProps } from "../../interface";
+import { UserProps } from "../../interface";
 
 const WelcomeModal = ({
   setIsNewUser,
@@ -12,7 +12,7 @@ const WelcomeModal = ({
   setIsNewUser: Dispatch<SetStateAction<Boolean>>;
 }): ReactElement => {
   const router = useRouter();
-  const { user } = useUserData() as { user: UserLoggedInProps };
+  const { user } = useUserData() as { user: UserProps };
   const handleUpdateUser = async () => {
     try {
       const res = await PUT("/api/user/new-user/", user.access_token);
