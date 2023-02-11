@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { signIn, SignInResponse } from "next-auth/react";
 import { API_SERVER, API_SERVER_DEV, CLOUDINARY_URL } from "../../const";
 import { CreateNotificationProps, LoginPayloadProps } from "../../interface";
+import { socket } from "../socket";
 axios.defaults.withCredentials = true;
 
 export const api = axios.create({
@@ -113,6 +114,20 @@ export const createPosts = async (
   return res.data;
 };
 
+export const updatePost = async (
+  token: string,
+  body: any,
+  id: string
+): Promise<AxiosResponse> => {
+  const res = await api.put(`/api/post/update/${id}`, body, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};
+
 export const deleteReactNotifications = async (
   token: string,
   notify_by: string,
@@ -127,6 +142,23 @@ export const deleteReactNotifications = async (
     }
   );
 
+  return res.data;
+};
+
+export const markNotificationRead = async (
+  token: string,
+  id: string
+): Promise<AxiosResponse> => {
+  const res = await api.put(
+    `/api/notification/${id}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  socket.emit("client:refresh_data");
   return res.data;
 };
 

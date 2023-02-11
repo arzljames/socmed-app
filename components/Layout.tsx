@@ -2,12 +2,18 @@ import { useSession } from "next-auth/react";
 import useUserData from "../hooks/useUserData";
 import { ReactChildrenProps, SessionProps } from "../interface";
 import { Dispatch, SetStateAction, useEffect } from "react";
-import { getNotifications, getPosts, getUser } from "../utils/api/api";
+import {
+  getNotifications,
+  getPosts,
+  getUser,
+  getUsersRecommendation,
+} from "../utils/api/api";
 import { AxiosResponse } from "axios";
 import { socket } from "../utils/socket";
 import useRefreshData from "../hooks/useRefreshData";
 import { useRouter } from "next/router";
 import _ from "lodash";
+import { Toaster } from "react-hot-toast";
 
 const Layout = ({ children }: ReactChildrenProps) => {
   const router = useRouter();
@@ -18,12 +24,14 @@ const Layout = ({ children }: ReactChildrenProps) => {
       : null;
   const {
     setUser,
+    setPeople,
     setPosts,
     setToken,
     setNotifications,
     setAttachmentWarning,
   } = useUserData() as {
     setUser: Dispatch<SetStateAction<AxiosResponse<any, any>>>;
+    setPeople: Dispatch<SetStateAction<AxiosResponse<any, any>>>;
     setPosts: Dispatch<SetStateAction<AxiosResponse<any, any>>>;
     setToken: Dispatch<SetStateAction<string>>;
     attachmentWarning: boolean;
@@ -37,6 +45,14 @@ const Layout = ({ children }: ReactChildrenProps) => {
     return;
   };
 
+  const fetchUsersRecommendation = async (
+    access_token: string
+  ): Promise<void> => {
+    const res = await getUsersRecommendation(access_token);
+    setPeople(res);
+    return;
+  };
+
   const fetchNotifications = async (access_token: string): Promise<void> => {
     const res = await getNotifications(access_token);
     setNotifications(res);
@@ -45,7 +61,6 @@ const Layout = ({ children }: ReactChildrenProps) => {
 
   const fetchPosts = async (access_token: string): Promise<void> => {
     const res = await getPosts(access_token);
-    console.log(res);
     setPosts(res);
     return;
   };
@@ -57,6 +72,7 @@ const Layout = ({ children }: ReactChildrenProps) => {
       fetchUser(access_token);
       fetchNotifications(access_token);
       fetchPosts(access_token);
+      fetchUsersRecommendation(access_token);
     }
 
     if (!isAttachmentWarning) {
@@ -74,7 +90,19 @@ const Layout = ({ children }: ReactChildrenProps) => {
     });
   }, [socket]);
 
-  return <div>{children}</div>;
+  return (
+    <main>
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          success: {
+            duration: 5000,
+          },
+        }}
+      />
+      {children}
+    </main>
+  );
 };
 
 export default Layout;

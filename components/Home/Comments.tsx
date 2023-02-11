@@ -5,18 +5,15 @@ import TextFeedUsername from "../Custom/Text/TextFeedUsername";
 import OtherProfileAvatar from "./OtherProfileAvatar";
 
 const Comments = ({
-  index,
   comment,
-  totalComment,
-  isShowingAllComments,
 }: {
   index: number;
   comment: any;
   totalComment: number;
-  isShowingAllComments: Boolean;
+  isShowingAllComments: boolean;
 }): ReactElement => {
   return (
-    <div className="relative mb-4 flex border-b pb-4">
+    <div className="relative mb-5 flex">
       <div className="z-10">
         <OtherProfileAvatar
           initials={comment.commentor.profile.initials}

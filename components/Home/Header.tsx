@@ -34,8 +34,22 @@ const Header = (): ReactElement => {
         <img className="h-9" src="/logo-dark.svg" alt="CreatVe" />
       </Link>
 
+      <div className="-50 relative hidden w-[40%] md:flex">
+        <div className="relative h-8 w-full">
+          <input
+            type="text"
+            className="h-full w-full rounded-xl border border-transparent bg-gray-100 pl-8 text-sm outline-none placeholder:text-xs placeholder:font-light focus:border-slate-300"
+            placeholder="Search and discover amazing things..."
+          />
+          <IoSearchOutline
+            className="absolute left-2 top-[50%] translate-y-[-50%] text-color-main-dark"
+            fontSize={20}
+          />
+        </div>
+      </div>
+
       <div className="flex items-center justify-end">
-        <div className="mr-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 md:hidden">
+        <div className="mr-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full hover:bg-gray-200 md:hidden">
           <IoSearchOutline className="text-gray-800" fontSize={20} />
         </div>
         <div

@@ -15,13 +15,14 @@ import Error from "next/error";
 import CustomLoader from "../Custom/Loader";
 import _ from "lodash";
 import Overlay from "../Custom/Overlay";
-import { UserLoggedInProps } from "../../interface";
+import { UserProps } from "../../interface";
 import AttachmentWarningModal from "./AttachmentWarningModal";
 import { socket } from "../../utils/socket";
 import {
   ATTACHMENT_MAX_SIZE,
   ALLOWED_ATTACHMENT_TYPES,
 } from "../../const/index";
+import toast from "react-hot-toast";
 
 const WritePost = (): ReactElement => {
   const [post, setPost] = useState<string>("");
@@ -39,7 +40,7 @@ const WritePost = (): ReactElement => {
   const [attachments, setAttachments] = useState<File | null>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const { user, token, attachmentWarning, setPosts } = useUserData() as {
-    user: UserLoggedInProps;
+    user: UserProps;
     token: string;
     attachmentWarning: boolean;
     setPosts: any;
@@ -74,11 +75,10 @@ const WritePost = (): ReactElement => {
   const handleSubmitPost = async () => {
     // to prevent double posting
     if (isPosting) return;
-
+    if (!post && !attachments) return;
     setIsPosting(true);
     try {
       // append image to form data as an array
-
       let url: string = "";
       if (attachments) url = await uploadCloudinary(attachments);
       const res = await createPosts(token, {
@@ -93,7 +93,15 @@ const WritePost = (): ReactElement => {
       setAttachments(null);
       setIsPosting(false);
       socket.emit("client:refresh_data");
-
+      if (res)
+        toast.success("Successfully shared post", {
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+            fontSize: 14,
+          },
+        });
       return res;
     } catch (error) {
       setIsPosting(false);
@@ -107,7 +115,8 @@ const WritePost = (): ReactElement => {
     setAttachments(null);
   };
 
-  // handler for removing attachment
+  // handler for adding attachment
+  // validation for type and size attachment
   const handleAddAttachement = (event: any) => {
     if (event.target.files[0]?.size > ATTACHMENT_MAX_SIZE)
       return alert("Attachment maximum size is 8mb only");
@@ -115,7 +124,6 @@ const WritePost = (): ReactElement => {
       return alert(
         "Attachment file can only be .jpeg, .jpg, .png, .mp4, and .mkv"
       );
-
     setAttachments(event.target.files[0]);
     if (attachmentWarning) {
       setWarning(true);
@@ -174,14 +182,16 @@ const WritePost = (): ReactElement => {
 
       <div className="0 flex flex-1 flex-col md:ml-2 ">
         <textarea
-          className="my-2 mb-6  max-h-20 resize-none  border border-none     text-sm text-text-main  outline-none duration-100 ease-in-out  placeholder:text-sm placeholder:font-light  "
+          className="my-2 resize-none border border-none text-sm text-text-main outline-none   placeholder:text-sm placeholder:font-light  "
           placeholder="What's Poppin? Share thoughts"
           value={post}
+          rows={1}
           ref={textAreaRef}
           onChange={handleChange}
         ></textarea>
+
         {attachments && (
-          <div className="flex flex-wrap">
+          <div className="mt-2 flex flex-wrap">
             <div
               onClick={() => handleViewFullSize(attachments)}
               className=" relative mb-2 mr-2 flex h-24 w-24 cursor-pointer  items-center justify-center rounded-lg border bg-white shadow-md"
