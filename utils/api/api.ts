@@ -6,7 +6,7 @@ import { socket } from "../socket";
 axios.defaults.withCredentials = true;
 
 export const api = axios.create({
-  baseURL: API_SERVER_DEV,
+  baseURL: API_SERVER,
   withCredentials: true,
 });
 
