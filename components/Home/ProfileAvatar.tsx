@@ -1,6 +1,6 @@
 import { ReactElement, useEffect } from "react";
 import useUserData from "../../hooks/useUserData";
-import { ReactChildrenProps, UserLoggedInProps } from "../../interface";
+import { ReactChildrenProps, UserProps } from "../../interface";
 
 const ProfileAvatar = ({
   w,
@@ -11,7 +11,7 @@ const ProfileAvatar = ({
   h?: string;
   ts?: string;
 }): ReactElement => {
-  const { user } = useUserData() as { user: UserLoggedInProps };
+  const { user } = useUserData() as { user: UserProps };
   const profileColor: string = user?.profile?.profile_color;
   const initials: string = user?.profile?.initials;
   const profilePhoto: string = user?.profile?.profile_photo;
