@@ -1,17 +1,13 @@
-import { useSession } from "next-auth/react";
-import { createContext, useEffect, useState } from "react";
-import {
-  CoverPhoto,
-  ProfilePhoto,
-  ReactChildrenProps,
-  UserLoggedInProps,
-  UserProfileLoggedInProps,
-} from "../interface";
+import { AxiosResponse } from "axios";
+import { createContext, useState } from "react";
+import { ReactChildrenProps, UserProps } from "../interface";
 
 const UserDataContext = createContext({});
 
 export const UserDataProvider = ({ children }: ReactChildrenProps) => {
-  const [user, setUser] = useState<any>({
+
+  const [user, setUser] = useState<UserProps>({
+
     _id: "",
     email: "",
     username: "",
@@ -20,7 +16,6 @@ export const UserDataProvider = ({ children }: ReactChildrenProps) => {
     is_new_user: false,
     createdAt: null,
     updatedAt: null,
-    access_token: "",
     profile: {
       _id: "",
       first_name: "",
@@ -28,23 +23,20 @@ export const UserDataProvider = ({ children }: ReactChildrenProps) => {
       middle_name: "",
       initials: "",
       profile_color: "",
-      profile_photo: {
-        path: "",
-        filename: "",
-      } as ProfilePhoto,
-      cover_photo: {
-        path: "",
-        filename: "",
-      } as CoverPhoto,
-      created_at: null,
-      updated_at: null,
+
+      profile_photo: "",
+      cover_photo: "",
+      createdAt: null,
+      updatedAt: null,
     },
+    friend_list: [],
   });
 
   const [token, setToken] = useState<string>("");
   const [attachmentWarning, setAttachmentWarning] = useState<boolean>(false);
-  const [notifications, setNotifications] = useState([]);
-  const [posts, setPosts] = useState([]);
+  const [notifications, setNotifications] = useState<AxiosResponse[]>([]);
+  const [posts, setPosts] = useState<AxiosResponse[]>([]);
+  const [people, setPeople] = useState<AxiosResponse[]>([]);
 
   return (
     <UserDataContext.Provider
@@ -59,6 +51,8 @@ export const UserDataProvider = ({ children }: ReactChildrenProps) => {
         attachmentWarning,
         posts,
         setPosts,
+        people,
+        setPeople,
       }}
     >
       {children}

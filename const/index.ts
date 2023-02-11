@@ -61,7 +61,7 @@ export const CHAT_STATUS = [
 ];
 
 export const REACTIONS_EMOJI = [
-  { id: 1, reaction: "Like", reaction_icon: "👍" },
+  { id: 1, reaction: "Silly", reaction_icon: "😋" },
   {
     id: 2,
     reaction: "Love",
@@ -80,7 +80,7 @@ export const REACTIONS_EMOJI = [
   {
     id: 5,
     reaction: "Angry",
-    reaction_icon: "😠",
+    reaction_icon: "😡",
   },
 ];
 
@@ -94,3 +94,30 @@ export const ALLOWED_ATTACHMENT_TYPES = [
 
 // 8mb max size for attachment
 export const ATTACHMENT_MAX_SIZE: number = 8388608;
+
+export const NOTIFICATIONS = {
+  REACTION: (
+    first_name: string,
+    last_name: string,
+    reaction: string,
+    notify_to: string,
+    notify_by: string,
+    reaction_icon: string,
+    post_id: string
+  ) => {
+    return {
+      notification_type: "Reaction",
+      notification: `${
+        first_name + " " + last_name
+      } reacted ${reaction.toLowerCase()} to one of your post`,
+      notify_to,
+      notify_by,
+      link: `/homefeed/post/${post_id}`,
+      reaction_icon,
+      post_id,
+    };
+  },
+  COMMENT: () => {},
+  SHARE: () => {},
+  ADD_FRIEND: () => {},
+};

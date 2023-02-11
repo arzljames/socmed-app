@@ -9,7 +9,7 @@ import {
 import useUserData from "../../../hooks/useUserData";
 import _ from "lodash";
 import { useRouter } from "next/router";
-import { REACTIONS_EMOJI } from "../../../const";
+import { REACTIONS_EMOJI, NOTIFICATIONS } from "../../../const";
 import Error from "next/error";
 import { socket } from "../../../utils/socket";
 import useSound from "../../../hooks/useSound";
@@ -24,20 +24,6 @@ const ButtonLike = ({
   const { user, token } = useUserData() as any;
   const router = useRouter();
   const [isHover, setIsHover] = useState<boolean>(false);
-
-  const notification = (reaction: string, reaction_icon: string) => {
-    return {
-      notification_type: "Reaction",
-      notification: `${
-        user.profile.first_name + " " + user.profile.last_name
-      } reacted ${reaction} to your post`,
-      notify_to: data?.author?._id,
-      notify_by: user._id,
-      link: `/homefeed/post/${data._id}`,
-      reaction_icon,
-      post_id: data._id,
-    };
-  };
 
   const handleReact = async ({
     reaction_icon,
@@ -55,7 +41,20 @@ const ButtonLike = ({
         reaction,
         postId: data._id,
       });
-      await createNotification(token, notification(reaction, reaction_icon));
+
+      await createNotification(
+        token,
+        NOTIFICATIONS.REACTION(
+          user.profile.first_name,
+          user.profile.last_name,
+          reaction,
+          data.author._id,
+          user._id,
+          reaction_icon,
+          data._id
+        )
+      );
+
       setIsHover(false);
       socket.emit("client:refresh_data");
       return res;
@@ -64,25 +63,9 @@ const ButtonLike = ({
     }
   };
 
-  const handleDefaultReact = async (reactionId?: string) => {
+  const handleRemoveReact = async (reactionId?: string) => {
     useSound("/click.mp3");
-    if (!reactionId) {
-      try {
-        await deleteReactNotifications(token, user._id, data._id);
-        const res = await POST("/api/post/reaction/", token, {
-          reactor: user._id,
-          reaction_icon: "👍",
-          reaction: "Like",
-          postId: data._id,
-        });
-        await createNotification(token, notification("👍", "Like"));
-        setIsHover(false);
-        socket.emit("client:refresh_data");
-        return res;
-      } catch (error) {
-        throw new Error(error);
-      }
-    } else {
+    if (reactionId) {
       try {
         await deleteReactNotifications(token, user._id, data._id);
         const res = await DELETE(
@@ -108,10 +91,10 @@ const ButtonLike = ({
 
   return (
     <div
-      onClick={() => handleDefaultReact(findReaction?._id)}
+      onClick={() => handleRemoveReact(findReaction?._id)}
       onMouseEnter={handleHoverBtn}
       onMouseLeave={handleRemoveHoverBtn}
-      className={`relative flex w-[30%] cursor-pointer items-center justify-center rounded-xl border py-2    ${
+      className={`relative flex w-[30%] cursor-pointer select-none items-center justify-center rounded-xl border py-2    ${
         findReaction
           ? " border  text-color-main-dark "
           : "text-text-sub hover:bg-gray-100"
