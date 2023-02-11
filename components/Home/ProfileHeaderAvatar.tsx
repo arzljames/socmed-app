@@ -1,13 +1,13 @@
 import { ReactElement, useEffect } from "react";
 import useUserData from "../../hooks/useUserData";
-import { ProfileAvatarProps, UserLoggedInProps } from "../../interface";
+import { ProfileAvatarProps, UserProps } from "../../interface";
 
 const ProfileHeaderAvatar = ({
   setIsNotificationOpen,
   setIsSignOutOpen,
   isSignOutOpen,
 }: ProfileAvatarProps): ReactElement => {
-  const { user } = useUserData() as { user: UserLoggedInProps };
+  const { user } = useUserData() as { user: UserProps };
   const profileColor: string = user?.profile?.profile_color;
   const initials: string = user?.profile?.initials;
   const profilePhoto: string = user?.profile?.profile_photo;

@@ -2,12 +2,12 @@ import { ReactElement, useEffect } from "react";
 import useUserData from "../../hooks/useUserData";
 import ProfileAvatar from "./ProfileAvatar";
 import { IoCameraOutline, IoPencil } from "react-icons/io5";
-import { UserLoggedInProps } from "../../interface";
+import { UserProps } from "../../interface";
 import _ from "lodash";
 
 const ProfileCard = (): ReactElement => {
   const { user, posts } = useUserData() as {
-    user: UserLoggedInProps;
+    user: UserProps;
     posts: any;
   };
   const name = user?.profile?.first_name + " " + user?.profile?.last_name;
