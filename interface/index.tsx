@@ -35,18 +35,17 @@ export interface CreateNotificationProps {
   post_id?: string;
 }
 
-export interface UserLoggedInProps {
+export interface UserProps {
   _id: string;
   username: string;
   email: string;
   is_new_user: boolean;
+  is_verified: boolean;
   status: string;
-  profile: UserProfileLoggedInProps;
+  profile: UserProfileProps;
   friend_list: any[];
   createdAt: Date | null;
   updatedAt: Date | null;
-  is_verified: boolean;
-  access_token?: string;
 }
 
 export interface FriendList {
@@ -54,7 +53,7 @@ export interface FriendList {
   friend_status: number;
   is_new_user: boolean;
   is_vertified: boolean;
-  profile: UserProfileLoggedInProps;
+  profile: UserProps;
   status: string;
   createdAt?: Date | null;
   updatedAt?: Date | null;
@@ -62,31 +61,21 @@ export interface FriendList {
   _id: string;
 }
 
-export interface UserProfileLoggedInProps {
+export interface UserProfileProps {
   _id: string;
   first_name: string;
   last_name: string;
   middle_name?: string;
   initials: string;
   profile_color: string;
-  profile_photo?: any;
-  cover_photo?: any;
+  profile_photo?: string;
+  cover_photo?: string;
   createdAt: Date | null;
   updatedAt: Date | null;
 }
 
-export interface ProfilePhoto {
-  path: string;
-  filename: string;
-}
-
-export interface CoverPhoto {
-  path: string;
-  filename: string;
-}
-
 export interface SetUserLoggedInProps {
-  setUser: Dispatch<SetStateAction<UserLoggedInProps>>;
+  setUser: Dispatch<SetStateAction<UserProps>>;
 }
 
 export interface ProfileAvatarProps {
