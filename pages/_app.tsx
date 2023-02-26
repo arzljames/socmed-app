@@ -5,20 +5,31 @@ import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { UserDataProvider } from "../context/user.context";
 import Layout from "../components/Layout";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 TimeAgo.addLocale(en);
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+    },
+  },
+});
 
 const MyApp = ({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) => {
   return (
-    <SessionProvider session={session}>
-      <UserDataProvider>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </UserDataProvider>
-    </SessionProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider session={session}>
+        <UserDataProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </UserDataProvider>
+      </SessionProvider>
+    </QueryClientProvider>
   );
 };
 

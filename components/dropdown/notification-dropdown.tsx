@@ -4,12 +4,12 @@ import TextHeading from "../Custom/Text/TextHeading";
 import _ from "lodash";
 import ReactTimeAgo from "react-time-ago";
 import useNotificationDate from "../../hooks/useNotificationDate";
-import OtherProfileAvatar from "./OtherProfileAvatar";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { markNotificationRead } from "../../utils/api/api";
 import Link from "next/link";
+import OtherProfileAvatar from "../avatar/user-avatar";
 
-const NotificationPanel = ({ ref }: any): JSX.Element => {
+const NotificationDropdown = ({ ref }: any): JSX.Element => {
   const { notifications, token } = useUserData() as any;
   const [groupNotif, setGroupNotif] = useState(null);
 
@@ -134,4 +134,4 @@ const NotificationPanel = ({ ref }: any): JSX.Element => {
   );
 };
 
-export default NotificationPanel;
+export default NotificationDropdown;

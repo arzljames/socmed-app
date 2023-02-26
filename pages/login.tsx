@@ -1,21 +1,32 @@
-import LoginHeader from "../components/Login/LoginHeader";
-import LoginForm from "../components/Login/LoginForm";
-import Head from "next/head";
 import { GetServerSidePropsContext, NextPage } from "next";
 import { getSession } from "next-auth/react";
 import { PublicRoute } from "../utils/PublicRoute";
+import Head from "next/head";
+import LoginForm from "../components/form/login-form";
 
 const Login: NextPage = () => {
+  const today: Date = new Date();
   return (
     <>
       <Head>
         <title>Sign in | CreatVe</title>
       </Head>
-      <div className="relative flex min-h-screen w-full flex-col bg-gradient-to-tr from-color-main to-color-main-2">
-        <LoginHeader />
-        <div className="flex flex-1 flex-col items-center justify-center px-3 pt-5 pb-10 md:py-10">
-          <LoginForm />
+      <div className="flex h-screen w-full">
+        <div className=" hidden h-full w-full items-center justify-center bg-white md:flex md:w-[60%]">
+          <div className="relative h-full w-full overflow-hidden">
+            <img
+              src="/cover.jpg"
+              className="h-full w-full object-cover object-center"
+              alt="cover"
+            />
+            <div className="absolute right-5 bottom-5 rounded-full bg-white bg-opacity-10 py-1 px-4 backdrop:blur-sm">
+              <p className="text-sm font-light tracking-wide text-[#ffffffd3]">
+                © CreatVe {today.getFullYear()}
+              </p>
+            </div>
+          </div>
         </div>
+        <LoginForm />
       </div>
     </>
   );

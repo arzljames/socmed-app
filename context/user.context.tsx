@@ -26,7 +26,7 @@ export const UserDataProvider = ({ children }: ReactChildrenProps) => {
       createdAt: null,
       updatedAt: null,
     },
-    friend_list: [],
+    followers: [],
   });
 
   const [token, setToken] = useState<string>("");
@@ -34,6 +34,8 @@ export const UserDataProvider = ({ children }: ReactChildrenProps) => {
   const [notifications, setNotifications] = useState<AxiosResponse[]>([]);
   const [posts, setPosts] = useState<AxiosResponse[]>([]);
   const [people, setPeople] = useState<AxiosResponse[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   return (
     <UserDataContext.Provider
@@ -50,6 +52,10 @@ export const UserDataProvider = ({ children }: ReactChildrenProps) => {
         setPosts,
         people,
         setPeople,
+        isLoading,
+        setIsLoading,
+        isFetching,
+        setIsFetching,
       }}
     >
       {children}

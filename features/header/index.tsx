@@ -1,48 +1,51 @@
-import { ReactElement, useEffect, useRef } from "react";
+import { ReactElement, useRef } from "react";
 import {
   IoSearchOutline,
   IoNotificationsOutline,
   IoNotifications,
 } from "react-icons/io5";
 import { useState } from "react";
-import NotificationPanel from "./NotificationPanel";
-import useOnClickOutside from "../../hooks/useOnClickOutside";
-import ProfileHeaderAvatar from "./ProfileHeaderAvatar";
-import SignOutDropdown from "./SignOutDropdown";
 import Link from "next/link";
 import useUserData from "../../hooks/useUserData";
+import OwnAvatar from "../../components/avatar/own-avatar";
+import NotificationDropdown from "../../components/dropdown/notification-dropdown";
+import ProfileDropdown from "../../components/dropdown/profile-dropdown";
 
 const Header = (): ReactElement => {
   const ref = useRef();
   const [isNotificationOpen, setIsNotificationOpen] = useState<Boolean>(false);
   const [isSignOutOpen, setIsSignOutOpen] = useState<Boolean>(false);
   const { notifications } = useUserData() as any;
-  useOnClickOutside(ref, () => setIsNotificationOpen(false));
 
-  const handleDropDown = () => {
+  const handleNotifDropDown = () => {
     setIsSignOutOpen(false);
     setIsNotificationOpen(!isNotificationOpen);
+  };
+
+  const handleProfileDropDown = () => {
+    setIsNotificationOpen(false);
+    setIsSignOutOpen(!isSignOutOpen);
   };
 
   return (
     <header
       className={
-        "flex h-[60px] w-full items-center justify-between bg-white  px-3 shadow-md sm:px-10 md:px-[10%]"
+        "z-20 flex h-[60px] w-full items-center justify-between bg-white px-3 shadow-sm sm:px-10 md:px-[10%]"
       }
     >
       <Link href="/homefeed">
-        <img className="h-9" src="/logo-dark.svg" alt="CreatVe" />
+        <img className="h-9" src="/assets/branding.svg" alt="CreatVe" />
       </Link>
 
       <div className="-50 relative hidden w-[40%] md:flex">
         <div className="relative h-8 w-full">
           <input
             type="text"
-            className="h-full w-full rounded-xl border border-transparent bg-gray-100 pl-8 text-sm outline-none placeholder:text-xs placeholder:font-light focus:border-slate-300"
+            className="h-full w-full rounded-xl border  border-transparent bg-slate-100 pl-8 text-sm outline-none placeholder:text-xs placeholder:font-light focus:border-color-main focus:bg-white focus:shadow-md hover:border-slate-300 hover:bg-white focus:hover:border-color-main-light "
             placeholder="Search and discover amazing things..."
           />
           <IoSearchOutline
-            className="absolute left-2 top-[50%] translate-y-[-50%] text-color-main-dark"
+            className="absolute left-2 top-[50%] translate-y-[-50%] text-gray-400"
             fontSize={20}
           />
         </div>
@@ -53,8 +56,8 @@ const Header = (): ReactElement => {
           <IoSearchOutline className="text-gray-800" fontSize={20} />
         </div>
         <div
-          onClick={handleDropDown}
-          className={`relative mr-2 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full hover:bg-gray-200  ${
+          onClick={handleNotifDropDown}
+          className={`relative mr-1 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full hover:bg-gray-200  ${
             isNotificationOpen ? "bg-gray-200" : "bg-white"
           }`}
         >
@@ -72,15 +75,22 @@ const Header = (): ReactElement => {
           )}
         </div>
 
-        <ProfileHeaderAvatar
-          setIsNotificationOpen={setIsNotificationOpen}
-          setIsSignOutOpen={setIsSignOutOpen}
-          isSignOutOpen={isSignOutOpen}
-        />
+        <div
+          onClick={handleProfileDropDown}
+          className={`relative rounded-full border-2 border-transparent ${
+            isSignOutOpen && "ml-1 border-gray-300"
+          } p-[1px]`}
+        >
+          <OwnAvatar
+            w={`${isSignOutOpen ? "w-8" : "w-9"}`}
+            h={`${isSignOutOpen ? "h-8" : "h-9"}`}
+            mr="mr-0"
+          />
+        </div>
       </div>
 
-      {isNotificationOpen && <NotificationPanel ref={ref} />}
-      {isSignOutOpen && <SignOutDropdown />}
+      {isNotificationOpen && <NotificationDropdown ref={ref} />}
+      {isSignOutOpen && <ProfileDropdown />}
     </header>
   );
 };
