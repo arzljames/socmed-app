@@ -1,26 +1,28 @@
 import { ReactElement, useEffect } from "react";
 import useUserData from "../../hooks/useUserData";
-import { ReactChildrenProps, UserLoggedInProps } from "../../interface";
+import { UserProps } from "../../interface";
 
-const ProfileAvatar = ({
+const OwnAvatar = ({
   w,
   h,
   ts,
+  mr,
 }: {
   w?: string;
   h?: string;
   ts?: string;
+  mr?: string;
 }): ReactElement => {
-  const { user } = useUserData() as { user: UserLoggedInProps };
+  const { user } = useUserData() as { user: UserProps };
   const profileColor: string = user?.profile?.profile_color;
   const initials: string = user?.profile?.initials;
   const profilePhoto: string = user?.profile?.profile_photo;
 
   return (
     <div
-      className={`mr-2 flex ${h ? h : "h-9"} ${
+      className={`${mr ? mr : "mr-2"} flex ${h ? h : "h-9"} ${
         w ? w : "w-9"
-      } items-center justify-center rounded-full ${profileColor} cursor-pointer`}
+      } select-none items-center justify-center rounded-full ${profileColor} z-0 cursor-pointer`}
     >
       {!profilePhoto ? (
         <p className={`font-semibold text-white ${ts && ts}`}>{initials}</p>
@@ -31,4 +33,4 @@ const ProfileAvatar = ({
   );
 };
 
-export default ProfileAvatar;
+export default OwnAvatar;

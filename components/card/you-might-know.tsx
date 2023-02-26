@@ -18,7 +18,7 @@ const PeopleYouMightKnow = ({
           return (
             <div
               key={user._id}
-              className="h  relative mb-2 flex  cursor-pointer items-center rounded-lg border border-transparent p-2 duration-75 ease-in-out hover:border-gray-200 hover:bg-slate-100 hover:shadow-md"
+              className="h  relative mb-2 flex  cursor-pointer items-center rounded-lg border border-transparent p-2 duration-75 ease-in-out hover:border-gray-200  hover:shadow-md"
             >
               <div
                 className={`mr-2 flex  h-8 w-8 items-center justify-center rounded-full ${user.profile.profile_color} cursor-pointer `}

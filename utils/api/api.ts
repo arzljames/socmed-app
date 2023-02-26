@@ -1,8 +1,10 @@
 import axios, { AxiosResponse } from "axios";
-import { signIn, SignInResponse } from "next-auth/react";
+import { signIn, SignInResponse, useSession } from "next-auth/react";
+import Error from "next/error";
 import { API_SERVER, API_SERVER_DEV, CLOUDINARY_URL } from "../../const";
 import { CreateNotificationProps, LoginPayloadProps } from "../../interface";
 import { socket } from "../socket";
+
 axios.defaults.withCredentials = true;
 
 export const api = axios.create({
@@ -44,12 +46,38 @@ export const getUser = async (token: string): Promise<AxiosResponse> => {
   }
 };
 
-export const getPosts = async (token: string): Promise<AxiosResponse> => {
-  if (token) {
-    const res = await api.get("/api/post", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return res.data;
+export const getPosts = async (
+  token: string,
+  limit?: number,
+  skip?: number
+): Promise<any> => {
+  try {
+    skip = skip ? skip : 0;
+    if (token) {
+      const res = await api.get(`/api/post?limit=${limit}&skip=${skip}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return res.data;
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getPostById = async (
+  token: string,
+  id: string
+): Promise<AxiosResponse> => {
+  try {
+    if (token) {
+      const res = await api.get(`/api/post/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return res.data;
+    }
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
   }
 };
 

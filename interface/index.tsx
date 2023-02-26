@@ -43,7 +43,7 @@ export interface UserProps {
   is_verified: boolean;
   status: string;
   profile: UserProfileProps;
-  friend_list: any[];
+  followers: any[];
   createdAt: Date | null;
   updatedAt: Date | null;
 }

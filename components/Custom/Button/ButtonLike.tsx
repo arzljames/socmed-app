@@ -13,6 +13,7 @@ import { REACTIONS_EMOJI, NOTIFICATIONS } from "../../../const";
 import Error from "next/error";
 import { socket } from "../../../utils/socket";
 import useSound from "../../../hooks/useSound";
+import useRefreshData from "../../../hooks/useRefreshData";
 
 const ButtonLike = ({
   findReaction,
@@ -56,6 +57,7 @@ const ButtonLike = ({
       );
 
       setIsHover(false);
+      useRefreshData(router);
       socket.emit("client:refresh_data");
       return res;
     } catch (error) {

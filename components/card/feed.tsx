@@ -1,4 +1,4 @@
-import { ReactElement, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ButtonComment from "../Custom/Button/ButtonComment";
 import ButtonLike from "../Custom/Button/ButtonLike";
 import ButtonShare from "../Custom/Button/ButtonShare";
@@ -13,30 +13,30 @@ import {
   IoPeopleOutline,
   IoGlobeOutline,
   IoSend,
-  IoWarning,
   IoPencil,
   IoTrashBin,
 } from "react-icons/io5";
 import { DELETE, POST } from "../../utils/api/api";
 import Error from "next/error";
-import ProfileAvatar from "./ProfileAvatar";
 import Overlay from "../Custom/Overlay";
-import TextHeading from "../Custom/Text/TextHeading";
-import CustomLoader from "../Custom/Loader";
 import useRefreshData from "../../hooks/useRefreshData";
 import { useRouter } from "next/router";
-import Comments from "./Comments";
 import { socket } from "../../utils/socket";
 import Link from "next/link";
 import { UserProps } from "../../interface";
-import EditPostModal from "./EditPostModal";
-import toast from "react-hot-toast";
+import { ThreeDots } from "react-loader-spinner";
+import useAutosizeTextArea from "../../hooks/useAutoSizeTextArea";
+import useToast from "../../hooks/useToast";
+import OwnAvatar from "../avatar/own-avatar";
+import DeletePostModal from "../modal/delete-post";
+import EditPostModal from "../modal/edit-post";
+import Comments from "../../features/comments";
 
 const Feed = ({ data }: any): JSX.Element => {
   const { author } = data as { author: UserProps };
   const [optionDropdown, setOptionDropdown] = useState<Boolean>(false);
   const [deleteModal, setDeleteModal] = useState<Boolean>(false);
-  const [isDeleting, setIsDeleting] = useState<Boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [orderBy, setOrderBy] = useState<"asc" | "desc" | boolean>("desc");
   const [filterBy, setFilterBy] = useState<number>(1);
   const [isShowingAllComments, setIsShowingAllComments] =
@@ -48,9 +48,11 @@ const Feed = ({ data }: any): JSX.Element => {
   const router = useRouter();
   const commentInputRef = useRef(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleComment = async () => {
     if (!comment) return;
+    setIsSubmitting(true);
     try {
       const res = await POST("/api/post/comment", token, {
         commentor: user._id,
@@ -61,8 +63,11 @@ const Feed = ({ data }: any): JSX.Element => {
       handleShowAllComments();
       setComment("");
       socket.emit("client:refresh_data");
+      if (res) setComment("");
+      setIsSubmitting(false);
       return res;
     } catch (error) {
+      setIsSubmitting(false);
       throw new Error(error);
     }
   };
@@ -75,17 +80,10 @@ const Feed = ({ data }: any): JSX.Element => {
       if (res) {
         setIsDeleting(false);
         setDeleteModal(false);
-
-        toast.success("Successfully deleted post", {
-          style: {
-            borderRadius: "10px",
-            background: "#333",
-            color: "#fff",
-            fontSize: 14,
-          },
-        });
+        useToast({ message: "Successfully deleted post", state: "success" });
       }
       socket.emit("client:refresh_data");
+      router.push("/homefeed");
       return res;
     } catch (error) {
       setIsDeleting(false);
@@ -111,16 +109,33 @@ const Feed = ({ data }: any): JSX.Element => {
     setFilterBy(1);
   };
 
+  const [typing, setTyping] = useState(false);
+  const onBlur = () => socket.emit("typing", false);
+
+  socket.on("typed", (data) => {
+    if (data) {
+      setTyping(true);
+    } else {
+      setTyping(false);
+    }
+  });
+
+  useAutosizeTextArea(commentInputRef.current, comment);
+
+  useEffect(() => {
+    socket.emit("typing", false);
+  }, []);
+
   return (
     <>
-      <div className="relative mb-4 flex w-full flex-col rounded-xl bg-white  py-3 shadow-sm   md:py-4">
+      <div className="relative z-0 mb-4 flex w-full flex-col rounded-xl bg-white  py-3 shadow-sm   md:py-4">
         <div className="flex px-3 md:px-6">
           <div
-            className={`mr-2 flex  h-9 w-9 items-center justify-center rounded-full ${author.profile.profile_color} cursor-pointer `}
+            className={`mr-2 flex  h-9 w-9 items-center justify-center rounded-full ${author?.profile.profile_color} cursor-pointer `}
           >
             {!author?.profile?.profile_photo ? (
               <p className={"font-semibold text-white"}>
-                {author.profile.initials}
+                {author?.profile.initials}
               </p>
             ) : (
               <img src="/" alt="Avatar" />
@@ -130,7 +145,7 @@ const Feed = ({ data }: any): JSX.Element => {
           <div className="0 flex flex-1 flex-col  ">
             <div className="mb-4">
               <TextFeedName>
-                {author.profile.first_name + " " + author.profile.last_name}{" "}
+                {author?.profile.first_name + " " + author?.profile.last_name}{" "}
               </TextFeedName>
 
               <Link
@@ -140,7 +155,7 @@ const Feed = ({ data }: any): JSX.Element => {
                 }}
                 className="mt-[1px] flex items-center text-xs text-text-sub hover:underline"
               >
-                {data.privacy === "Friends" ? (
+                {data.privacy === "Followers" ? (
                   <IoPeopleOutline className="mr-1" />
                 ) : (
                   <IoGlobeOutline className="mr-1" />
@@ -162,7 +177,6 @@ const Feed = ({ data }: any): JSX.Element => {
           <div className="mb-2 px-3 md:px-6">
             <TextParagraph>{data.message}</TextParagraph>
           </div>
-
           {data?.attachments?.url && (
             <div className="mb-2 flex items-center justify-center">
               {data?.attachments.type === "video/mp4" ||
@@ -188,7 +202,6 @@ const Feed = ({ data }: any): JSX.Element => {
               )}
             </div>
           )}
-
           <div className="flex justify-between px-3 py-2 md:px-6">
             <p className="cursor-pointer text-xs text-text-sub hover:underline  md:text-xs">
               <span className="mr-1 text-base">
@@ -211,7 +224,6 @@ const Feed = ({ data }: any): JSX.Element => {
             <ButtonComment handleCommentInputRef={handleCommentInputRef} />
             <ButtonShare />
           </div>
-
           {!_.isEmpty(data.comments) && (
             <div className="my-5  px-3  pl-4 md:px-6">
               <div className="flex justify-end">
@@ -232,6 +244,7 @@ const Feed = ({ data }: any): JSX.Element => {
                   </p>
                 )}
               </div>
+
               {_.map(
                 _.take(
                   _.orderBy(data.comments, "updatedAt", orderBy),
@@ -251,23 +264,41 @@ const Feed = ({ data }: any): JSX.Element => {
               )}
             </div>
           )}
-
-          <div className=" mt-4 flex px-3  md:px-6">
-            <div className="relative w-full">
-              <div className="absolute left-1 top-[50%]  translate-y-[-50%]">
-                <ProfileAvatar w="h-7" h="w-7" />
+          {typing && (
+            <div className="flex w-full items-end justify-center text-xs text-text-sub">
+              <p className="mr-2">Someone is typing</p>
+              <ThreeDots
+                height="16"
+                width="16"
+                radius="9"
+                color="#6F6F6F"
+                ariaLabel="three-dots-loading"
+                visible={true}
+              />
+            </div>
+          )}
+          <div className=" mt-4 flex items-center justify-center  px-3 md:px-6">
+            <div className="relative flex h-auto w-full">
+              <div className="mt-[1px]">
+                <OwnAvatar w="h-7" h="w-7" />
               </div>
-              <input
+              <textarea
+                onBlur={onBlur}
                 value={comment}
                 ref={commentInputRef}
-                onChange={(e) => setComment(e.target.value)}
-                type="text"
+                onChange={(e) => {
+                  socket.emit("typing", true);
+                  setComment(e.target.value);
+                }}
                 placeholder="Write a comment"
-                className="h-9 w-full rounded-full bg-gray-100 pr-10 pl-10 text-sm text-text-main outline-none placeholder:text-sm placeholder:font-light"
+                rows={0}
+                className="min-h-[30px] w-full resize-none rounded-xl bg-slate-100 py-1.5 pr-10 pl-4 text-sm text-text-main outline-none scrollbar-none placeholder:text-sm placeholder:font-light"
               />
-              {comment?.length !== 0 && (
+              {comment.replace(/\s/g, "") && comment?.length !== 0 && (
                 <button
-                  className="absolute right-0 top-0 h-8  px-3 text-color-main-dark"
+                  className={`${
+                    isSubmitting && "cursor-not-allowed opacity-50"
+                  } absolute top-[50%] right-0 h-8 translate-y-[-50%] px-3 text-lg text-color-main hover:text-color-main-dark`}
                   onClick={handleComment}
                 >
                   <IoSend />
@@ -279,12 +310,12 @@ const Feed = ({ data }: any): JSX.Element => {
 
         <div
           onClick={() =>
-            user._id !== author._id ? null : setOptionDropdown(!optionDropdown)
+            user._id !== author?._id ? null : setOptionDropdown(!optionDropdown)
           }
           className={`${
             optionDropdown && "bg-slate-200"
           } absolute right-3 top-3 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full duration-100 hover:bg-slate-200 ${
-            user._id !== author._id && "cursor-not-allowed opacity-40"
+            user._id !== author?._id && "cursor-not-allowed opacity-40"
           }`}
         >
           <IoEllipsisVertical />
@@ -305,52 +336,20 @@ const Feed = ({ data }: any): JSX.Element => {
             </div>
           )}
         </div>
-
-        {deleteModal && (
-          <Overlay setDeleteModal={setDeleteModal}>
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="w-full rounded-xl bg-white p-5 shadow-md md:w-1/3"
-            >
-              <TextHeading>Delete Post</TextHeading>
-              <div className="my-5">
-                <p className="mb-2 text-sm text-text-main">
-                  Are you really sure you want to delete this post?
-                </p>
-                <div className="flex items-center rounded-l-sm rounded-r-md border-l-2 border-red-500 bg-red-100 p-3">
-                  <IoWarning className="mr-2 text-3xl text-red-600" />
-                  <p className="text-[13px] text-red-500">
-                    This action is irreversible. You will no longer be able to
-                    retrieve this in the future.
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() => setDeleteModal(false)}
-                  className="mr-2 rounded-lg border px-3 py-2 text-sm duration-100 ease-in-out hover:shadow-md"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDeletePost}
-                  className={`flex rounded-lg border bg-red-500 px-3 py-2 text-sm text-white ${
-                    isDeleting && "pointer-events-none opacity-50"
-                  } duration-100 ease-in-out hover:bg-red-600`}
-                >
-                  {isDeleting && (
-                    <CustomLoader h="15" w="15" c="#fff" m="mr-2" />
-                  )}
-                  {isDeleting ? "Deleting..." : "Delete"}
-                </button>
-              </div>
-            </div>
-          </Overlay>
-        )}
       </div>
       {isEditing && (
         <Overlay>
           <EditPostModal data={data} setIsEditing={setIsEditing} />
+        </Overlay>
+      )}
+
+      {deleteModal && (
+        <Overlay setDeleteModal={setDeleteModal}>
+          <DeletePostModal
+            setDeleteModal={setDeleteModal}
+            isDeleting={isDeleting}
+            handleDeletePost={handleDeletePost}
+          />
         </Overlay>
       )}
     </>

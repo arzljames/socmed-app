@@ -1,4 +1,4 @@
-import { ReactElement, useRef, useState, useEffect } from "react";
+import { ReactElement, useRef, useState } from "react";
 import useAutosizeTextArea from "../../hooks/useAutoSizeTextArea";
 import {
   IoCamera,
@@ -7,22 +7,24 @@ import {
   IoPeopleOutline,
 } from "react-icons/io5";
 import { FaTimes } from "react-icons/fa";
-import ProfileAvatar from "./ProfileAvatar";
 import useUserData from "../../hooks/useUserData";
 import { createPosts, uploadCloudinary } from "../../utils/api/api";
-import TextFeedName from "../Custom/Text/TextFeedName";
 import Error from "next/error";
-import CustomLoader from "../Custom/Loader";
 import _ from "lodash";
-import Overlay from "../Custom/Overlay";
 import { UserProps } from "../../interface";
-import AttachmentWarningModal from "./AttachmentWarningModal";
 import { socket } from "../../utils/socket";
 import {
   ATTACHMENT_MAX_SIZE,
   ALLOWED_ATTACHMENT_TYPES,
 } from "../../const/index";
-import toast from "react-hot-toast";
+import { useRouter } from "next/router";
+import useRefreshData from "../../hooks/useRefreshData";
+import useToast from "../../hooks/useToast";
+import OwnAvatar from "../../components/avatar/own-avatar";
+import TextFeedName from "../../components/Custom/Text/TextFeedName";
+import CustomLoader from "../../components/Custom/Loader";
+import Overlay from "../../components/Custom/Overlay";
+import AttachmentWarningModal from "../../components/modal/attachement-warning";
 
 const WritePost = (): ReactElement => {
   const [post, setPost] = useState<string>("");
@@ -36,7 +38,7 @@ const WritePost = (): ReactElement => {
     fileToPreview: null,
   });
   const [privacyDropdown, setPrivacyDropdown] = useState<boolean>(false);
-  const [privacy, setPrivacy] = useState<string>("Friends");
+  const [privacy, setPrivacy] = useState<string>("Followers");
   const [attachments, setAttachments] = useState<File | null>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const { user, token, attachmentWarning, setPosts } = useUserData() as {
@@ -46,20 +48,20 @@ const WritePost = (): ReactElement => {
     setPosts: any;
   };
 
+  const router = useRouter();
+
   useAutosizeTextArea(textAreaRef.current, post);
 
   const inputTextAreaRef = useRef<HTMLTextAreaElement>(null);
   const inputFileRef = useRef<HTMLInputElement>(null);
 
   const onBtnClick = () => {
-    /*Collecting node-element and performing click*/
     if (inputTextAreaRef.current) {
       inputTextAreaRef.current.focus();
     }
   };
 
   const onInputFileRefClick = () => {
-    /*Collecting node-element and performing click*/
     if (inputFileRef.current) {
       inputFileRef.current.click();
     }
@@ -67,7 +69,6 @@ const WritePost = (): ReactElement => {
 
   const handleChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = evt.target?.value;
-
     setPost(val);
   };
 
@@ -78,6 +79,7 @@ const WritePost = (): ReactElement => {
     if (!post && !attachments) return;
     setIsPosting(true);
     try {
+      useRefreshData(router);
       // append image to form data as an array
       let url: string = "";
       if (attachments) url = await uploadCloudinary(attachments);
@@ -94,14 +96,7 @@ const WritePost = (): ReactElement => {
       setIsPosting(false);
       socket.emit("client:refresh_data");
       if (res)
-        toast.success("Successfully shared post", {
-          style: {
-            borderRadius: "10px",
-            background: "#333",
-            color: "#fff",
-            fontSize: 14,
-          },
-        });
+        useToast({ message: "Successfully shared post", state: "success" });
       return res;
     } catch (error) {
       setIsPosting(false);
@@ -119,11 +114,18 @@ const WritePost = (): ReactElement => {
   // validation for type and size attachment
   const handleAddAttachement = (event: any) => {
     if (event.target.files[0]?.size > ATTACHMENT_MAX_SIZE)
-      return alert("Attachment maximum size is 8mb only");
+      return useToast({
+        message: "Attachment maximum size is 8mb only",
+        state: "error",
+      });
+
     if (!_.includes(ALLOWED_ATTACHMENT_TYPES, event.target.files[0]?.type))
-      return alert(
-        "Attachment file can only be .jpeg, .jpg, .png, .mp4, and .mkv"
-      );
+      return useToast({
+        message:
+          "Attachment file can only be .jpeg, .jpg, .png, .mp4, and .mkv",
+        state: "error",
+      });
+
     setAttachments(event.target.files[0]);
     if (attachmentWarning) {
       setWarning(true);
@@ -140,7 +142,7 @@ const WritePost = (): ReactElement => {
       className="mb-4 flex w-full flex-col rounded-xl bg-white  px-3 py-3 shadow-sm  md:px-6 md:py-4"
     >
       <div className="mb-2 flex  w-full items-center ">
-        <ProfileAvatar />
+        <OwnAvatar />
         <div className="relative flex flex-col items-start ">
           <TextFeedName>
             {user?.profile?.first_name + " " + user?.profile?.last_name}
@@ -159,12 +161,12 @@ const WritePost = (): ReactElement => {
             <div className="absolute left-0 top-[107%] z-10 min-w-[100px] rounded-md border bg-white py-1 text-xs text-text-sub">
               <div
                 onClick={() => {
-                  setPrivacy("Friends");
+                  setPrivacy("Followers");
                   setPrivacyDropdown(false);
                 }}
                 className=" mb-1 flex cursor-pointer items-center px-2 py-2 hover:bg-gray-100 hover:text-text-main "
               >
-                <IoPeopleOutline className="mr-1" /> <p>Friends</p>
+                <IoPeopleOutline className="mr-1" /> <p>Followers</p>
               </div>
               <div
                 onClick={() => {

@@ -1,5 +1,3 @@
-import React from "react";
-
 const useSound = (sound: string) => {
   if (sound) {
     let audio: HTMLAudioElement = new Audio(sound);

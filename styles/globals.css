@@ -5,10 +5,9 @@
 
 body {
   font-family: "Poppins", sans-serif;
+  background: rgb(241 245 249);
+
 }
-
-
-
 
 
 /* width */
@@ -18,16 +17,16 @@ body {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f100;
+  background: #e6e6e600;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #7cacf5;
+  background: #c2c2c2;
   border-radius: 100px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #608bca;
+  background: #999999;
 }

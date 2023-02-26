@@ -6,10 +6,12 @@
     "start": "next start"
   },
   "dependencies": {
-    "@tanstack/react-query": "^4.24.4",
+    "@tanstack/react-query": "^4.24.6",
     "@types/uuid": "^9.0.0",
     "axios": "^1.2.2",
+    "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
+    "embla-carousel-react": "^7.0.9",
     "javascript-time-ago": "^2.5.9",
     "lodash": "^4.17.21",
     "next": "latest",
@@ -18,6 +20,7 @@
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.7.1",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-loader-spinner": "^5.3.4",
     "react-time-ago": "^7.2.1",
     "react-tooltip": "^5.5.2",

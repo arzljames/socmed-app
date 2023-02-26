@@ -15,7 +15,7 @@ module.exports = {
         "color-main": "#629AEF",
         "color-main-2": "#9F57E8",
         "color-main-light": "#7FB2FF",
-        "color-main-dark": "#5A8DD9",
+        "color-main-dark": "#4575bf",
         "color-border": "#C0C0C0",
         "color-bg": "#EFEFEF",
       },

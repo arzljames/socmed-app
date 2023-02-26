@@ -1,5 +1,3 @@
-import React from "react";
-
 const useNotificationDate = (date: string): string => {
   const todayDate = new Date();
   const compareDate = new Date(date);

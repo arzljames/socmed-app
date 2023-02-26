@@ -30,10 +30,10 @@ export const HOME_MOBILE_NAV = [
   },
 
   {
-    name: "Friends",
+    name: "Followers",
     iconActive: IoPeople,
     iconInactive: IoPeopleOutline,
-    path: "/friends",
+    path: "/followers",
   },
 
   {
@@ -119,4 +119,10 @@ export const NOTIFICATIONS = {
   COMMENT: () => {},
   SHARE: () => {},
   ADD_FRIEND: () => {},
+};
+
+export const ROUTES = {
+  LOGIN: "/login",
+  REGISTER: "/register",
+  HOMEFEED: "/homefeed",
 };
