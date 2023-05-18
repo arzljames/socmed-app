@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -6,7 +6,13 @@ import { login } from "../../utils/api/api";
 import { IoEyeOff, IoEye } from "react-icons/io5";
 import CustomLoader from "../Custom/Loader";
 
-const LoginForm = (): ReactElement => {
+const LoginForm = ({
+  demo_username,
+  demo_password,
+}: {
+  demo_username?: string;
+  demo_password?: string;
+}): ReactElement => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -41,13 +47,28 @@ const LoginForm = (): ReactElement => {
       });
     }
   };
+
+  useEffect(() => {
+    if (demo_password || demo_username) {
+      const demoLogin = async () => {
+        const status = await login("credentials", {
+          username: demo_username,
+          password: demo_password,
+        });
+        router.push(status.url);
+      };
+
+      demoLogin();
+    }
+  }, []);
+
   return (
     <>
       <form
         onSubmit={(e) => e.preventDefault()}
         className="relative flex h-full w-full flex-col items-center justify-center overflow-y-scroll bg-white  py-8 md:w-[40%]"
       >
-        <div className="w-full max-w-[400px] ">
+        <div className="w-full max-w-[400px] px-3">
           <div className="mb-8 flex w-full flex-col items-center">
             <img
               src="/assets/favicon.ico"
@@ -122,7 +143,13 @@ const LoginForm = (): ReactElement => {
               "cursor-not-allowed to-color-main-2 opacity-60 hover:from-color-main"
             }`}
           >
-            {isLoading ? <CustomLoader h="18" w="18" c="#fff" /> : "Sign in"}
+            {isLoading ? (
+              <>
+                <CustomLoader h="18" m="mr-2" w="18" c="#fff" /> Signing in...
+              </>
+            ) : (
+              "Sign in"
+            )}
           </button>
 
           <div className="w-f relative flex w-full justify-center  text-sm content-none ">

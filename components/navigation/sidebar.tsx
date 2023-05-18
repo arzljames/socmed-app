@@ -8,8 +8,8 @@ const Sidebar = (): ReactElement => {
   const router = useRouter();
   const pathName = router.pathname;
   return (
-    <nav className="z-20 hidden h-full w-60 items-start justify-start pt-5 md:flex">
-      <ul className="w-full">
+    <nav className="hidden h-full w-60 flex-col items-start justify-start pt-5 md:flex">
+      <ul className="w-full select-none">
         {HOME_MOBILE_NAV?.map((item: NavProps) => {
           return (
             <li
@@ -19,7 +19,8 @@ const Sidebar = (): ReactElement => {
               key={item.name}
             >
               <Link
-                className="flex h-full w-full items-center"
+                onClick={() => router.replace(item.path)}
+                className="flex h-full w-full items-center "
                 href={item.path}
               >
                 {pathName.includes(item.path) ? (

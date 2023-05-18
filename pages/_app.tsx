@@ -1,4 +1,5 @@
 import "../styles/globals.css";
+import React from "react";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import type { AppProps } from "next/app";

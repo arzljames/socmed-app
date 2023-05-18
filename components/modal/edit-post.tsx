@@ -7,10 +7,11 @@ import {
   IoGlobeOutline,
   IoPeopleOutline,
   IoCamera,
+  IoPeople,
+  IoGlobe,
 } from "react-icons/io5";
 import { updatePost, uploadCloudinary } from "../../utils/api/api";
 import useUserData from "../../hooks/useUserData";
-import { socket } from "../../utils/socket";
 import Error from "next/error";
 import CustomLoader from "../Custom/Loader";
 import toast from "react-hot-toast";
@@ -19,6 +20,11 @@ import { UserProps } from "../../interface";
 import { ALLOWED_ATTACHMENT_TYPES, ATTACHMENT_MAX_SIZE } from "../../const";
 import _ from "lodash";
 import OwnAvatar from "../avatar/own-avatar";
+import { useRouter } from "next/router";
+import OtherProfileAvatar from "../avatar/user-avatar";
+import TextFeedUsername from "../Custom/Text/TextFeedUsername";
+import TextParagraph from "../Custom/Text/TextFeedParagraph";
+import CancelBtn from "../button/cancel-btn";
 
 const EditPostModal = ({ data, setIsEditing }: any) => {
   const [isPosting, setIsPosting] = useState<boolean>(false);
@@ -31,7 +37,7 @@ const EditPostModal = ({ data, setIsEditing }: any) => {
   );
   const [newAttachments, setNewAttachments] = useState<File>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
+  const router = useRouter();
   useAutosizeTextArea(textAreaRef.current, message);
 
   useEffect(() => {
@@ -43,7 +49,6 @@ const EditPostModal = ({ data, setIsEditing }: any) => {
   const handleUpdatePost = async () => {
     // to prevent double posting
     if (isPosting) return;
-    if (!message && !attachments?.url) return;
     setIsPosting(true);
     try {
       let url: string = "";
@@ -59,7 +64,6 @@ const EditPostModal = ({ data, setIsEditing }: any) => {
         },
         data._id
       );
-      socket.emit("client:refresh_data");
       setIsPosting(false);
       setIsEditing(false);
       if (res)
@@ -115,7 +119,7 @@ const EditPostModal = ({ data, setIsEditing }: any) => {
   };
 
   return (
-    <div className="relative h-[85%] min-h-[400px] w-full overflow-hidden rounded-xl bg-white pt-5 shadow-md  scrollbar-none md:h-[65%] md:min-h-[500px] md:w-1/3">
+    <div className="scrollbar-none relative h-[85%] min-h-[400px] w-full overflow-hidden rounded-xl bg-white pt-5  shadow-md md:h-[65%] md:min-h-[500px] md:w-1/3">
       <div className="mb-3 flex items-center justify-center border-b px-5 pb-3">
         <TextHeading>Edit Post</TextHeading>
       </div>
@@ -226,8 +230,72 @@ const EditPostModal = ({ data, setIsEditing }: any) => {
             </span>
           </div>
         )}
+
+        {data?.post && (
+          <div className="relative z-0 mb-4 mt-4 flex w-full flex-col rounded-xl  border bg-white py-3 shadow-md  md:py-4">
+            <div className="flex px-3 md:px-6">
+              {data?.post.author._id === user._id ? (
+                <OwnAvatar showStatus={true} />
+              ) : (
+                <OtherProfileAvatar
+                  initials={data?.post.author?.profile?.initials}
+                  profile_color={data?.post.author?.profile?.profile_color}
+                  profile_picture={data?.post.author?.profile?.profile_photo}
+                />
+              )}
+
+              <div className="0 flex flex-1 flex-col  ">
+                <div className="mb-4">
+                  <div className="flex items-baseline">
+                    <div className="mr-1">
+                      <TextFeedName>
+                        {data?.post.author?.profile.first_name +
+                          " " +
+                          data?.post.author?.profile.last_name}{" "}
+                      </TextFeedName>
+                    </div>
+                  </div>
+
+                  <div className="mt-[1px] flex items-center text-xs text-text-sub">
+                    {data?.post.privacy === "Followers" ? (
+                      <IoPeople className="mr-1" />
+                    ) : (
+                      <IoGlobe className="mr-1" />
+                    )}
+                    <TextFeedUsername>
+                      @{data?.post.author.username}
+                    </TextFeedUsername>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="mb-2 px-3 md:px-6">
+                <TextParagraph>{data?.post.message}</TextParagraph>
+              </div>
+              {data?.post?.attachments?.url && (
+                <div className="mb-2 flex items-center justify-center">
+                  {data?.post?.attachments.type === "video/mp4" ||
+                  data?.post?.attachments.type === "video/x-matroska" ? (
+                    <video
+                      className="w-full cursor-pointer object-cover"
+                      src={data?.post?.attachments?.url}
+                      controls
+                    />
+                  ) : (
+                    <img
+                      className="w-full cursor-pointer object-cover"
+                      src={data?.post?.attachments?.url}
+                      alt="attachment"
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
-      <div className="sticky bottom-0 flex  h-16 w-full items-center justify-between  bg-red-50 px-5">
+      <div className="sticky bottom-0 flex  h-16 w-full items-center justify-between  bg-white px-5">
         <input
           ref={inputFileRef}
           type="file"
@@ -236,27 +304,29 @@ const EditPostModal = ({ data, setIsEditing }: any) => {
             handleAddAttachement(event);
           }}
         />
-        <div
-          onClick={onInputFileRefClick}
-          className={`mr-2 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-gray-50 text-lg text-color-main duration-75 ease-in-out hover:bg-slate-200 ${
-            (attachments?.url || newAttachments?.type) &&
-            "pointer-events-none opacity-50"
-          }`}
-        >
-          <IoCamera />
-        </div>
-        <div className="flex ">
-          <button
-            onClick={() => setIsEditing(false)}
-            className={`mr-2 flex rounded-lg border px-4 py-2 text-sm text-color-main hover:shadow-lg`}
+        {data?.post ? (
+          <div></div>
+        ) : (
+          <div
+            onClick={onInputFileRefClick}
+            className={`mr-2 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-gray-50 text-lg text-color-main duration-75 ease-in-out hover:bg-slate-200 ${
+              (attachments?.url || newAttachments?.type) &&
+              "pointer-events-none opacity-50"
+            }`}
           >
-            Cancel
-          </button>
+            <IoCamera />
+          </div>
+        )}
+        <div className="flex ">
+          <CancelBtn clickEvent={() => setIsEditing(false)}>
+            <p>Cancel</p>
+          </CancelBtn>
           <button
             onClick={handleUpdatePost}
             className={`flex items-center  rounded-lg bg-color-main px-4 py-2  text-sm font-medium text-white duration-100 hover:bg-color-main-dark ${
               !message &&
               !attachments?.url &&
+              !data?.post &&
               "pointer-events-auto cursor-not-allowed opacity-50"
             }`}
           >

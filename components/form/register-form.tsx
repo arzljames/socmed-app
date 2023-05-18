@@ -97,12 +97,12 @@ const RegisterForm = (): ReactElement => {
               alt="logo"
               className="mb-3 h-11 w-11"
             />
-            <div>
+            <div className="flex flex-col items-center text-center">
               <h2 className="text-2xl font-semibold text-text-main">
                 Create an account
               </h2>
               <p className="text-sm text-text-sub">
-                The next social media platform
+                Few clicks away from creating your account
               </p>
             </div>
           </div>
@@ -317,7 +317,13 @@ const RegisterForm = (): ReactElement => {
               "cursor-not-allowed to-color-main-2 opacity-60 hover:from-color-main"
             }`}
           >
-            {isLoading ? <CustomLoader h="18" w="18" c="#fff" /> : "Sign up"}
+            {isLoading ? (
+              <>
+                <CustomLoader h="18" m="mr-2" w="18" c="#fff" /> Signing up...
+              </>
+            ) : (
+              "Sign up"
+            )}
           </button>
 
           <div className=" relative flex w-full justify-center bg-white text-sm content-none ">

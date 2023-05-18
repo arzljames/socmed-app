@@ -11,38 +11,48 @@ import WritePost from "../../features/feed/write-post";
 import WelcomeModal from "../../components/modal/welcome";
 import ProfileCard from "../../components/card/profile-card";
 import PeopleYouMightKnow from "../../components/card/you-might-know";
+import PromptModal from "../../components/modal/prompt-modal";
 
 const HomeFeed = ({ data }: any): JSX.Element => {
-  const { user, people, isLoading } = useUserData() as any;
+  const { user, people } = useUserData() as any;
   const [isNewUser, setIsNewUser] = useState<boolean>(user?.is_new_user);
-  const [posts, setPosts] = useState([]);
+  const [promptModal, setPromptModal] = useState<boolean>(false);
+  const [toFollow, setToFollow] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   return (
     <>
       <Head>
-        <title>CreatVe</title>
+        <title>CreatVe — Where Creativity Begins</title>
       </Head>
       <div
         id="scrollable"
         className="mr-1 flex h-full w-full flex-1 flex-col items-center justify-start overflow-y-auto bg-transparent pr-1 pt-3 md:mr-2 md:pr-2  md:pl-5 md:pt-5"
       >
         <WritePost />
-        <FeedList data={data} />
+        <FeedList />
       </div>
-      <div className="sticky top-20 right-0  hidden h-full  w-64  flex-col items-start   justify-start overflow-y-scroll pt-5 pb-4  lg:flex">
-        <ProfileCard />
-        <PeopleYouMightKnow listUsers={people} />
+      <div className="sticky top-20 right-0  hidden h-full  w-64  flex-col items-start   justify-start overflow-y-scroll pt-5 pb-1  lg:flex">
+        <ProfileCard data={data} />
+        <PeopleYouMightKnow
+          listUsers={people}
+          setToFollow={setToFollow}
+          setPromptModal={setPromptModal}
+        />
       </div>
-
-      {!posts && (
-        <div className="my-10 flex flex-col items-center justify-center">
-          <img className="w-60" src="/empty.svg" alt="empty" />
-          <p className="text-center text-sm font-light text-text-sub">
-            It's empty. Nothing to show from your feed
-          </p>
-        </div>
-      )}
 
       {isNewUser && <WelcomeModal setIsNewUser={setIsNewUser} />}
+      {/* {promptModal && (
+        <PromptModal
+          setPromptModal={setPromptModal}
+          title="Follow User"
+          message={`Are you sure you want to follow ${toFollow}?`}
+          isLoading={isLoading}
+          btnName="Submit"
+
+
+        />
+      )} */}
     </>
   );
 };

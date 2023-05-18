@@ -7,15 +7,19 @@ import {
 import { useState } from "react";
 import Link from "next/link";
 import useUserData from "../../hooks/useUserData";
-import OwnAvatar from "../../components/avatar/own-avatar";
-import NotificationDropdown from "../../components/dropdown/notification-dropdown";
-import ProfileDropdown from "../../components/dropdown/profile-dropdown";
+import OwnAvatar from "../avatar/own-avatar";
+import NotificationDropdown from "../dropdown/notification-dropdown";
+import ProfileDropdown from "../dropdown/profile-dropdown";
+import _ from "lodash";
+import SearchUsersList from "../../features/search/search-users-list";
 
 const Header = (): ReactElement => {
   const ref = useRef();
-  const [isNotificationOpen, setIsNotificationOpen] = useState<Boolean>(false);
-  const [isSignOutOpen, setIsSignOutOpen] = useState<Boolean>(false);
-  const { notifications } = useUserData() as any;
+  const [isNotificationOpen, setIsNotificationOpen] = useState<boolean>(false);
+  const [isSignOutOpen, setIsSignOutOpen] = useState<boolean>(false);
+  const { notificationBadge } = useUserData() as any;
+  const [searchKey, setSearchKey] = useState<string>("");
+  const [searchDropdown, setSearchDropdown] = useState<boolean>(false);
 
   const handleNotifDropDown = () => {
     setIsSignOutOpen(false);
@@ -40,14 +44,35 @@ const Header = (): ReactElement => {
       <div className="-50 relative hidden w-[40%] md:flex">
         <div className="relative h-8 w-full">
           <input
+            onFocus={() => setSearchDropdown(true)}
+            onBlur={() => setSearchDropdown(false)}
             type="text"
-            className="h-full w-full rounded-xl border  border-transparent bg-slate-100 pl-8 text-sm outline-none placeholder:text-xs placeholder:font-light focus:border-color-main focus:bg-white focus:shadow-md hover:border-slate-300 hover:bg-white focus:hover:border-color-main-light "
-            placeholder="Search and discover amazing things..."
+            value={searchKey}
+            onChange={(e) => setSearchKey(e.target.value)}
+            className="h-full w-full rounded-xl border   border-transparent bg-slate-100 pl-8 text-sm outline-none placeholder:text-xs placeholder:font-light hover:border-slate-300 hover:bg-white focus:border-color-main focus:bg-white focus:shadow-md focus:hover:border-color-main-light "
+            placeholder="Search for @someone..."
           />
-          <IoSearchOutline
-            className="absolute left-2 top-[50%] translate-y-[-50%] text-gray-400"
-            fontSize={20}
-          />
+          <div className="absolute left-2 top-[50%] z-0 translate-y-[-50%] text-gray-400">
+            <IoSearchOutline fontSize={20} />
+          </div>
+
+          {searchDropdown && (
+            // <div className="absolute top-[110%] h-auto  w-full rounded-lg  border bg-white shadow-md">
+            // {searchKey && (
+            //   <div className="flex h-10 items-center px-2">
+            //     <div className="flex items-center">
+            //       <div className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-color-main text-white">
+            //         <IoSearch />
+            //       </div>
+            //       <p className="text-sm font-light text-text-main">
+            //         Search for <b>{searchKey}</b>
+            //       </p>
+            //     </div>
+            //   </div>
+            // )}
+            // </div>
+            <SearchUsersList searchKey={searchKey} />
+          )}
         </div>
       </div>
 
@@ -61,11 +86,9 @@ const Header = (): ReactElement => {
             isNotificationOpen ? "bg-gray-200" : "bg-white"
           }`}
         >
-          {notifications?.meta?.total_unread !== 0 && (
+          {notificationBadge > 0 && (
             <div className="absolute top-[-2px] right-[-2px] flex h-5 w-6 items-center justify-center rounded-full border-2  border-white bg-red-500 text-xs font-semibold text-white">
-              {notifications?.meta?.total_unread > 9
-                ? "9+"
-                : notifications?.meta?.total_unread}
+              {notificationBadge > 9 ? "9+" : notificationBadge}
             </div>
           )}
           {isNotificationOpen ? (
@@ -85,6 +108,7 @@ const Header = (): ReactElement => {
             w={`${isSignOutOpen ? "w-8" : "w-9"}`}
             h={`${isSignOutOpen ? "h-8" : "h-9"}`}
             mr="mr-0"
+            showStatus={true}
           />
         </div>
       </div>

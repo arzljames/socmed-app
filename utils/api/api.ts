@@ -46,6 +46,31 @@ export const getUser = async (token: string): Promise<AxiosResponse> => {
   }
 };
 
+export const getUserStatus = async (token: string): Promise<string | null> => {
+  if (token) {
+    const res = await api.get("/api/user/status", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+  }
+};
+
+interface IStatus {
+  status: string;
+}
+
+export const updateUserStatus = async (
+  token: string,
+  body: IStatus
+): Promise<string | null> => {
+  if (token) {
+    const res = await api.put("/api/user/status", body, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+  }
+};
+
 export const getPosts = async (
   token: string,
   limit?: number,
@@ -53,6 +78,7 @@ export const getPosts = async (
 ): Promise<any> => {
   try {
     skip = skip ? skip : 0;
+    limit = limit ? limit : 10;
     if (token) {
       const res = await api.get(`/api/post?limit=${limit}&skip=${skip}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -82,12 +108,69 @@ export const getPostById = async (
 };
 
 export const getNotifications = async (
-  token: string
-): Promise<AxiosResponse> => {
+  token: string,
+  limit?: number,
+  skip?: number
+): Promise<any> => {
   if (token) {
-    const res = await api.get("/api/notification?limit=99999", {
+    skip = skip ? skip : 0;
+    limit = limit ? limit : 10;
+    const res = await api.get(`/api/notification?limit=${limit}&skip=${skip}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    return res.data;
+  }
+};
+
+export const searchQuery = async (
+  token: string,
+  limit?: number,
+  skip?: number,
+  search_key?: string
+): Promise<any> => {
+  skip = skip ? skip : 0;
+  limit = limit ? limit : 10;
+  search_key = search_key ? search_key : "";
+  const res = await api.get(
+    `/api/search?limit=${limit}&skip=${skip}&search_key=${search_key}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  socket.emit("client:refresh_data");
+  return res.data;
+};
+
+export const updateNotification = async (
+  token: string,
+  id: string,
+  status: string
+): Promise<AxiosResponse> => {
+  if (token) {
+    const res = await api.put(
+      `/api/notification/${id}/update`,
+      {
+        notification_status: status,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data;
+  }
+};
+
+export const deleteNotification = async (
+  token: string,
+  id: string
+): Promise<AxiosResponse> => {
+  if (token) {
+    const res = await api.delete(`/api/notification/${id}/delete`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    socket.emit("client:refresh_data");
     return res.data;
   }
 };
@@ -138,7 +221,7 @@ export const createPosts = async (
       Authorization: `Bearer ${token}`,
     },
   });
-
+  socket.emit("client:refresh_data");
   return res.data;
 };
 
@@ -153,6 +236,7 @@ export const updatePost = async (
     },
   });
 
+  socket.emit("client:refresh_data");
   return res.data;
 };
 
@@ -179,6 +263,22 @@ export const markNotificationRead = async (
 ): Promise<AxiosResponse> => {
   const res = await api.put(
     `/api/notification/${id}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  socket.emit("client:refresh_data");
+  return res.data;
+};
+
+export const markAllNotificationsRead = async (
+  token: string
+): Promise<AxiosResponse> => {
+  const res = await api.put(
+    "/api/notification/update/mark-all-read",
     {},
     {
       headers: {
@@ -240,4 +340,13 @@ export const PUT = async (
   );
 
   return res;
+};
+
+export const getComments = async (token: string, id: string): Promise<any> => {
+  const res = await api.get(`/api/comment/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
 };

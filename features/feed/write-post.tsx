@@ -3,6 +3,7 @@ import useAutosizeTextArea from "../../hooks/useAutoSizeTextArea";
 import {
   IoCamera,
   IoCaretDown,
+  IoCaretForward,
   IoGlobeOutline,
   IoPeopleOutline,
 } from "react-icons/io5";
@@ -17,8 +18,6 @@ import {
   ATTACHMENT_MAX_SIZE,
   ALLOWED_ATTACHMENT_TYPES,
 } from "../../const/index";
-import { useRouter } from "next/router";
-import useRefreshData from "../../hooks/useRefreshData";
 import useToast from "../../hooks/useToast";
 import OwnAvatar from "../../components/avatar/own-avatar";
 import TextFeedName from "../../components/Custom/Text/TextFeedName";
@@ -47,8 +46,6 @@ const WritePost = (): ReactElement => {
     attachmentWarning: boolean;
     setPosts: any;
   };
-
-  const router = useRouter();
 
   useAutosizeTextArea(textAreaRef.current, post);
 
@@ -79,8 +76,6 @@ const WritePost = (): ReactElement => {
     if (!post && !attachments) return;
     setIsPosting(true);
     try {
-      useRefreshData(router);
-      // append image to form data as an array
       let url: string = "";
       if (attachments) url = await uploadCloudinary(attachments);
       const res = await createPosts(token, {
@@ -94,7 +89,6 @@ const WritePost = (): ReactElement => {
       setPost("");
       setAttachments(null);
       setIsPosting(false);
-      socket.emit("client:refresh_data");
       if (res)
         useToast({ message: "Successfully shared post", state: "success" });
       return res;
@@ -141,7 +135,7 @@ const WritePost = (): ReactElement => {
       onClick={() => onBtnClick()}
       className="mb-4 flex w-full flex-col rounded-xl bg-white  px-3 py-3 shadow-sm  md:px-6 md:py-4"
     >
-      <div className="mb-2 flex  w-full items-center ">
+      <div className=" z-0 mb-4 flex w-full items-center ">
         <OwnAvatar />
         <div className="relative flex flex-col items-start ">
           <TextFeedName>
@@ -152,19 +146,25 @@ const WritePost = (): ReactElement => {
               e.stopPropagation();
               setPrivacyDropdown(!privacyDropdown);
             }}
-            className=" mt-1 flex cursor-pointer items-center rounded-md bg-gray-100 py-1 px-2 hover:bg-gray-200"
+            className={`mt-1 flex cursor-pointer items-center rounded-md bg-gray-100 py-1 px-2 hover:bg-gray-200 ${
+              privacyDropdown && "bg-gray-200"
+            }`}
           >
-            <p className=" mr-1 text-xs text-text-sub">{privacy}</p>
-            <IoCaretDown className="text-xs  text-text-main" />
+            <p className="mr-1 select-none text-xs text-text-sub">{privacy}</p>
+            {privacyDropdown ? (
+              <IoCaretForward className="text-xs  text-text-main" />
+            ) : (
+              <IoCaretDown className="text-xs  text-text-main" />
+            )}
           </div>
           {privacyDropdown && (
-            <div className="absolute left-0 top-[107%] z-10 min-w-[100px] rounded-md border bg-white py-1 text-xs text-text-sub">
+            <div className="absolute left-0 top-[107%]  z-auto min-w-[100px] rounded-md border bg-white p-1 text-xs text-text-sub">
               <div
                 onClick={() => {
                   setPrivacy("Followers");
                   setPrivacyDropdown(false);
                 }}
-                className=" mb-1 flex cursor-pointer items-center px-2 py-2 hover:bg-gray-100 hover:text-text-main "
+                className="mb-1 flex cursor-pointer items-center rounded-md px-2 py-2 hover:bg-gray-100 hover:text-text-main "
               >
                 <IoPeopleOutline className="mr-1" /> <p>Followers</p>
               </div>
@@ -173,7 +173,7 @@ const WritePost = (): ReactElement => {
                   setPrivacy("Public");
                   setPrivacyDropdown(false);
                 }}
-                className="flex cursor-pointer items-center py-2 px-2 hover:bg-gray-100 hover:text-text-main"
+                className="flex cursor-pointer items-center rounded-md px-2 py-2 hover:bg-gray-100 hover:text-text-main "
               >
                 <IoGlobeOutline className="mr-1" /> <p>Public</p>
               </div>
@@ -182,7 +182,7 @@ const WritePost = (): ReactElement => {
         </div>
       </div>
 
-      <div className="0 flex flex-1 flex-col md:ml-2 ">
+      <div className="flex flex-1 flex-col md:ml-2 ">
         <textarea
           className="my-2 resize-none border border-none text-sm text-text-main outline-none   placeholder:text-sm placeholder:font-light  "
           placeholder="What's Poppin? Share thoughts"
@@ -225,7 +225,7 @@ const WritePost = (): ReactElement => {
           </div>
         )}
 
-        <div className="relative flex w-full items-center justify-end">
+        <div className="z-[-1] mt-2 flex items-center justify-end ">
           <input
             ref={inputFileRef}
             type="file"
@@ -243,10 +243,13 @@ const WritePost = (): ReactElement => {
 
           <button
             onClick={handleSubmitPost}
-            className={`flex items-center rounded-full bg-color-main py-1.5 px-4 text-sm font-medium text-white duration-100 hover:bg-color-main-dark ${
+            className={`flex items-center  rounded-full bg-color-main py-1.5 px-4 text-sm font-medium text-white duration-100 hover:bg-color-main-dark ${
               !post &&
               !attachments &&
-              "pointer-events-auto cursor-not-allowed opacity-50"
+              "pointer-events-auto cursor-not-allowed opacity-50 hover:bg-color-main"
+            } ${
+              isPosting &&
+              "pointer-events-auto cursor-not-allowed opacity-50 hover:bg-color-main"
             }`}
           >
             {isPosting && <CustomLoader h="15" w="15" c="#fff" m="mr-2" />}

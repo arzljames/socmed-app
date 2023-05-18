@@ -21,7 +21,6 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwind-scrollbar")],
   safelist: [
     "bg-red-500",
     "bg-orange-500",

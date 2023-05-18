@@ -19,7 +19,7 @@ const register: NextPage = () => {
               alt="cover"
             />
 
-            <div className="absolute right-5 bottom-5 rounded-full bg-white bg-opacity-10 py-1 px-3">
+            <div className="absolute right-5 bottom-5 rounded-full bg-white bg-opacity-10 py-1 px-4 backdrop:blur-sm">
               <p className="text-sm font-light tracking-wide text-[#ffffffd3]">
                 © CreatVe {today.getFullYear()}
               </p>

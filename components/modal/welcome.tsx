@@ -1,8 +1,6 @@
-import { useRouter } from "next/router";
 import React, { Dispatch, ReactElement, SetStateAction } from "react";
 import { HiOutlineArrowNarrowRight } from "react-icons/hi";
 import { PUT } from "../../utils/api/api";
-import useRefreshData from "../../hooks/useRefreshData";
 import useUserData from "../../hooks/useUserData";
 import { UserProps } from "../../interface";
 
@@ -11,7 +9,6 @@ const WelcomeModal = ({
 }: {
   setIsNewUser: Dispatch<SetStateAction<Boolean>>;
 }): ReactElement => {
-  const router = useRouter();
   const { user, token } = useUserData() as { user: UserProps; token: string };
   const handleUpdateUser = async () => {
     try {
@@ -20,7 +17,6 @@ const WelcomeModal = ({
     } catch (error) {
     } finally {
       setIsNewUser(false);
-      useRefreshData(router);
     }
   };
 

@@ -10,17 +10,20 @@ import _ from "lodash";
 import useUserData from "../../hooks/useUserData";
 import {
   IoEllipsisVertical,
-  IoPeopleOutline,
-  IoGlobeOutline,
+  IoPeople,
+  IoGlobe,
   IoSend,
   IoPencil,
   IoTrashBin,
 } from "react-icons/io5";
-import { DELETE, POST } from "../../utils/api/api";
+import {
+  createNotification,
+  DELETE,
+  getComments,
+  POST,
+} from "../../utils/api/api";
 import Error from "next/error";
 import Overlay from "../Custom/Overlay";
-import useRefreshData from "../../hooks/useRefreshData";
-import { useRouter } from "next/router";
 import { socket } from "../../utils/socket";
 import Link from "next/link";
 import { UserProps } from "../../interface";
@@ -28,9 +31,12 @@ import { ThreeDots } from "react-loader-spinner";
 import useAutosizeTextArea from "../../hooks/useAutoSizeTextArea";
 import useToast from "../../hooks/useToast";
 import OwnAvatar from "../avatar/own-avatar";
-import DeletePostModal from "../modal/delete-post";
+import DeletePostModal from "../modal/delete-modal";
 import EditPostModal from "../modal/edit-post";
+import SharePostModal from "../modal/share-post";
 import Comments from "../../features/comments";
+import OtherProfileAvatar from "../avatar/user-avatar";
+import { NOTIFICATIONS } from "../../const";
 
 const Feed = ({ data }: any): JSX.Element => {
   const { author } = data as { author: UserProps };
@@ -42,13 +48,37 @@ const Feed = ({ data }: any): JSX.Element => {
   const [isShowingAllComments, setIsShowingAllComments] =
     useState<boolean>(false);
   const reactions = data.reactions as any;
-  const { user, token } = useUserData() as any;
+  const { user, token, posts } = useUserData() as {
+    user: UserProps;
+    token: string;
+    posts: any;
+  };
   const findReaction = _.find(reactions, { reactor: user._id.toString() });
   const [comment, setComment] = useState<string>("");
-  const router = useRouter();
+  const [comments, setComments] = useState<any[]>();
   const commentInputRef = useRef(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [isSharing, setIsSharing] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isReacted, setIsReacted] = useState<boolean>(false);
+
+  useEffect(() => {
+    fetchComments();
+    const findReaction = _.find(reactions, { reactor: user._id.toString() });
+
+    if (findReaction) {
+      setIsReacted(true);
+      return;
+    }
+
+    return () => setIsReacted(false);
+  }, [posts]);
+
+  const fetchComments = async () => {
+    const res = await getComments(token, data?._id);
+    setComments(res);
+    return res;
+  };
 
   const handleComment = async () => {
     if (!comment) return;
@@ -59,12 +89,24 @@ const Feed = ({ data }: any): JSX.Element => {
         comment,
         postId: data._id,
       });
-      useRefreshData(router);
+
+      // Create notification when comment submitted
+      await createNotification(
+        token,
+        NOTIFICATIONS.COMMENT(
+          user.profile.first_name,
+          user.profile.last_name,
+          data.author._id,
+          user._id,
+          data._id
+        )
+      );
+
       handleShowAllComments();
       setComment("");
-      socket.emit("client:refresh_data");
       if (res) setComment("");
       setIsSubmitting(false);
+      socket.emit("client:refresh_data");
       return res;
     } catch (error) {
       setIsSubmitting(false);
@@ -83,7 +125,6 @@ const Feed = ({ data }: any): JSX.Element => {
         useToast({ message: "Successfully deleted post", state: "success" });
       }
       socket.emit("client:refresh_data");
-      router.push("/homefeed");
       return res;
     } catch (error) {
       setIsDeleting(false);
@@ -112,41 +153,53 @@ const Feed = ({ data }: any): JSX.Element => {
   const [typing, setTyping] = useState(false);
   const onBlur = () => socket.emit("typing", false);
 
-  socket.on("typed", (data) => {
-    if (data) {
-      setTyping(true);
-    } else {
-      setTyping(false);
-    }
-  });
-
   useAutosizeTextArea(commentInputRef.current, comment);
 
   useEffect(() => {
-    socket.emit("typing", false);
+    socket.on("typed", (id) => {
+      if (id === data?._id) {
+        setTyping(true);
+      } else {
+        setTyping(false);
+      }
+    });
   }, []);
 
   return (
     <>
       <div className="relative z-0 mb-4 flex w-full flex-col rounded-xl bg-white  py-3 shadow-sm   md:py-4">
         <div className="flex px-3 md:px-6">
-          <div
-            className={`mr-2 flex  h-9 w-9 items-center justify-center rounded-full ${author?.profile.profile_color} cursor-pointer `}
-          >
-            {!author?.profile?.profile_photo ? (
-              <p className={"font-semibold text-white"}>
-                {author?.profile.initials}
-              </p>
-            ) : (
-              <img src="/" alt="Avatar" />
-            )}
-          </div>
+          {author._id === user._id ? (
+            <OwnAvatar showStatus={true} />
+          ) : (
+            <OtherProfileAvatar
+              initials={author?.profile?.initials}
+              profile_color={author?.profile?.profile_color}
+              profile_picture={author?.profile?.profile_photo}
+            />
+          )}
 
           <div className="0 flex flex-1 flex-col  ">
             <div className="mb-4">
-              <TextFeedName>
-                {author?.profile.first_name + " " + author?.profile.last_name}{" "}
-              </TextFeedName>
+              <div className="flex items-baseline">
+                <div className="mr-1">
+                  <TextFeedName>
+                    {author?.profile.first_name +
+                      " " +
+                      author?.profile.last_name}{" "}
+                  </TextFeedName>
+                </div>
+
+                <TextFeedUsername>
+                  •{" "}
+                  <ReactTimeAgo
+                    date={new Date(data.createdAt)}
+                    locale="en-US"
+                    timeStyle="twitter"
+                  />{" "}
+                  {data.edited && "(Edited)"}
+                </TextFeedUsername>
+              </div>
 
               <Link
                 href={{
@@ -156,19 +209,11 @@ const Feed = ({ data }: any): JSX.Element => {
                 className="mt-[1px] flex items-center text-xs text-text-sub hover:underline"
               >
                 {data.privacy === "Followers" ? (
-                  <IoPeopleOutline className="mr-1" />
+                  <IoPeople className="mr-1" />
                 ) : (
-                  <IoGlobeOutline className="mr-1" />
+                  <IoGlobe className="mr-1" />
                 )}
-                <TextFeedUsername>
-                  {data.privacy} —{" "}
-                  <ReactTimeAgo
-                    date={new Date(data.createdAt)}
-                    locale="en-US"
-                    timeStyle="round-minute"
-                  />{" "}
-                  {data.edited && "(Edited)"}
-                </TextFeedUsername>
+                <TextFeedUsername>@{data.author.username}</TextFeedUsername>
               </Link>
             </div>
           </div>
@@ -178,11 +223,11 @@ const Feed = ({ data }: any): JSX.Element => {
             <TextParagraph>{data.message}</TextParagraph>
           </div>
           {data?.attachments?.url && (
-            <div className="mb-2 flex items-center justify-center">
+            <div className="mb-2 flex items-center justify-center border-y">
               {data?.attachments.type === "video/mp4" ||
               data?.attachments.type === "video/x-matroska" ? (
                 <video
-                  className="w-full cursor-pointer border-y object-cover"
+                  className="w-full cursor-pointer  object-cover"
                   src={data?.attachments?.url}
                   controls
                 />
@@ -194,12 +239,89 @@ const Feed = ({ data }: any): JSX.Element => {
                   }}
                 >
                   <img
-                    className="w-full cursor-pointer border-y object-cover"
+                    className="cursor-pointerobject-cover w-full"
                     src={data?.attachments?.url}
                     alt="attachment"
                   />
                 </Link>
               )}
+            </div>
+          )}
+          {data?.post && (
+            <div className="mt-4 px-3 md:px-6">
+              <div className="relative z-0 mb-4 flex w-full cursor-pointer flex-col rounded-xl  border bg-white py-3 shadow-sm md:py-4">
+                <div className="flex px-3 md:px-6">
+                  {data?.post.author._id === user._id ? (
+                    <OwnAvatar showStatus={true} />
+                  ) : (
+                    <OtherProfileAvatar
+                      initials={data?.post.author?.profile?.initials}
+                      profile_color={data?.post.author?.profile?.profile_color}
+                      profile_picture={
+                        data?.post.author?.profile?.profile_photo
+                      }
+                    />
+                  )}
+
+                  <div className="0 flex flex-1 flex-col  ">
+                    <div className="mb-4">
+                      <div className="flex items-baseline">
+                        <div className="mr-1">
+                          <TextFeedName>
+                            {data?.post.author?.profile.first_name +
+                              " " +
+                              data?.post.author?.profile.last_name}{" "}
+                          </TextFeedName>
+                        </div>
+
+                        <TextFeedUsername>
+                          •{" "}
+                          <ReactTimeAgo
+                            date={new Date(data.post.createdAt)}
+                            locale="en-US"
+                            timeStyle="twitter"
+                          />{" "}
+                          {data.post.edited && "(Edited)"}
+                        </TextFeedUsername>
+                      </div>
+
+                      <div className="mt-[1px] flex items-center text-xs text-text-sub">
+                        {data.privacy === "Followers" ? (
+                          <IoPeople className="mr-1" />
+                        ) : (
+                          <IoGlobe className="mr-1" />
+                        )}
+                        <TextFeedUsername>
+                          @{data.post.author.username}
+                        </TextFeedUsername>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div className="mb-2 px-3 md:px-6">
+                    <TextParagraph>{data?.post.message}</TextParagraph>
+                  </div>
+                  {data.post?.attachments?.url && (
+                    <div className="mb-2 flex items-center justify-center border-t">
+                      {data.post?.attachments.type === "video/mp4" ||
+                      data.post?.attachments.type === "video/x-matroska" ? (
+                        <video
+                          className="w-full cursor-pointer  object-cover"
+                          src={data.post?.attachments?.url}
+                          controls
+                        />
+                      ) : (
+                        <img
+                          className="cursor-pointerobject-cover w-full"
+                          src={data.post?.attachments?.url}
+                          alt="attachment"
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           )}
           <div className="flex justify-between px-3 py-2 md:px-6">
@@ -220,13 +342,17 @@ const Feed = ({ data }: any): JSX.Element => {
             )}
           </div>
           <div className="flex px-3 md:px-6">
-            <ButtonLike data={data} findReaction={findReaction} />
+            <ButtonLike
+              data={data}
+              isReacted={isReacted}
+              findReaction={findReaction}
+            />
             <ButtonComment handleCommentInputRef={handleCommentInputRef} />
-            <ButtonShare />
+            <ButtonShare setIsSharing={setIsSharing} />
           </div>
           {!_.isEmpty(data.comments) && (
-            <div className="my-5  px-3  pl-4 md:px-6">
-              <div className="flex justify-end">
+            <div className="mb-5 mt-3  px-3 pl-4 md:px-6">
+              <div className="mb-3 flex justify-end border-b">
                 {data.comments.length > 1 && !isShowingAllComments ? (
                   <p
                     onClick={handleShowAllComments}
@@ -250,6 +376,7 @@ const Feed = ({ data }: any): JSX.Element => {
                   _.orderBy(data.comments, "updatedAt", orderBy),
                   filterBy
                 ),
+
                 (comment: any, index: number) => {
                   return (
                     <Comments
@@ -265,7 +392,7 @@ const Feed = ({ data }: any): JSX.Element => {
             </div>
           )}
           {typing && (
-            <div className="flex w-full items-end justify-center text-xs text-text-sub">
+            <div className="mt-2 flex w-full items-end justify-center text-xs text-text-sub">
               <p className="mr-2">Someone is typing</p>
               <ThreeDots
                 height="16"
@@ -277,33 +404,36 @@ const Feed = ({ data }: any): JSX.Element => {
               />
             </div>
           )}
-          <div className=" mt-4 flex items-center justify-center  px-3 md:px-6">
-            <div className="relative flex h-auto w-full">
-              <div className="mt-[1px]">
-                <OwnAvatar w="h-7" h="w-7" />
-              </div>
+          <div className=" mt-4 flex  px-3 md:px-6">
+            <div className="relative z-0 flex h-auto w-full">
+              {!comment && (
+                <div className="absolute top-[50%] left-[3px] translate-y-[-50%]">
+                  <OwnAvatar w="h-7" h="w-7" />
+                </div>
+              )}
               <textarea
                 onBlur={onBlur}
                 value={comment}
                 ref={commentInputRef}
                 onChange={(e) => {
-                  socket.emit("typing", true);
+                  socket.emit("typing", data._id);
                   setComment(e.target.value);
                 }}
                 placeholder="Write a comment"
                 rows={0}
-                className="min-h-[30px] w-full resize-none rounded-xl bg-slate-100 py-1.5 pr-10 pl-4 text-sm text-text-main outline-none scrollbar-none placeholder:text-sm placeholder:font-light"
+                className={`scrollbar-none min-h-[30px] w-full resize-none rounded-xl bg-slate-100 py-1.5 ${
+                  !comment ? "pl-9" : "pl-3"
+                }  pr-10 text-sm text-text-main outline-none placeholder:text-sm placeholder:font-light`}
               />
-              {comment.replace(/\s/g, "") && comment?.length !== 0 && (
-                <button
-                  className={`${
-                    isSubmitting && "cursor-not-allowed opacity-50"
-                  } absolute top-[50%] right-0 h-8 translate-y-[-50%] px-3 text-lg text-color-main hover:text-color-main-dark`}
-                  onClick={handleComment}
-                >
-                  <IoSend />
-                </button>
-              )}
+
+              <button
+                className={`${
+                  (isSubmitting || !comment) && "cursor-not-allowed opacity-50"
+                }  pl-3 text-lg text-color-main hover:text-color-main-dark`}
+                onClick={handleComment}
+              >
+                <IoSend />
+              </button>
             </div>
           </div>
         </div>
@@ -318,18 +448,18 @@ const Feed = ({ data }: any): JSX.Element => {
             user._id !== author?._id && "cursor-not-allowed opacity-40"
           }`}
         >
-          <IoEllipsisVertical />
+          <IoEllipsisVertical className="text-text-sub" />
           {optionDropdown && (
-            <div className="absolute right-0 top-[110%] min-w-[100px] rounded-lg border bg-white py-1 shadow-sm">
+            <div className="absolute right-0 top-[110%] min-w-[100px] rounded-lg border bg-white p-1 shadow-sm">
               <p
                 onClick={() => setIsEditing(true)}
-                className="flex w-full items-center px-2 py-2 text-sm  font-medium text-text-sub hover:bg-slate-100"
+                className="flex w-full items-center rounded-md px-2 py-2 text-xs  font-medium text-text-sub hover:bg-slate-100"
               >
                 <IoPencil className="mr-2" /> Edit
               </p>
               <p
                 onClick={() => setDeleteModal(true)}
-                className="flex items-center px-2 py-2 text-sm font-medium text-red-500 hover:bg-red-50"
+                className="flex items-center rounded-md px-2 py-2 text-xs font-medium text-red-500 hover:bg-red-50"
               >
                 <IoTrashBin className="mr-2" /> Delete
               </p>
@@ -338,8 +468,17 @@ const Feed = ({ data }: any): JSX.Element => {
         </div>
       </div>
       {isEditing && (
-        <Overlay>
+        <Overlay setOverlay={() => setIsEditing(false)}>
           <EditPostModal data={data} setIsEditing={setIsEditing} />
+        </Overlay>
+      )}
+
+      {isSharing && (
+        <Overlay setOverlay={() => setIsSharing(false)}>
+          <SharePostModal
+            data={data?.post ?? data}
+            setIsSharing={setIsSharing}
+          />
         </Overlay>
       )}
 
@@ -348,7 +487,7 @@ const Feed = ({ data }: any): JSX.Element => {
           <DeletePostModal
             setDeleteModal={setDeleteModal}
             isDeleting={isDeleting}
-            handleDeletePost={handleDeletePost}
+            handleDelete={handleDeletePost}
           />
         </Overlay>
       )}
