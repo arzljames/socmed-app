@@ -365,7 +365,7 @@ const FeedID = ({ data }: any): JSX.Element => {
           <DeletePostModal
             setDeleteModal={setDeleteModal}
             isDeleting={isDeleting}
-            handleDeletePost={handleDeletePost}
+            handleDelete={handleDeletePost}
           />
         </Overlay>
       )}
