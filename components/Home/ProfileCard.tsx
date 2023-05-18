@@ -43,9 +43,9 @@ const ProfileCard = (): ReactElement => {
         </div>
         <div className="flex flex-1 flex-col items-center justify-center text-sm">
           <h4 className="font-lg font-semibold text-text-main">
-            {user?.friend_list?.length}
+            {user?.followers?.length}
           </h4>
-          <p className="text-sm text-text-sub">Friends</p>
+          <p className="text-sm text-text-sub">Followers</p>
         </div>
       </div>
       <div className="flex w-full cursor-pointer items-center justify-center rounded-b-xl py-3 text-color-main-dark hover:underline">

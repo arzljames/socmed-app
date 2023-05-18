@@ -4,7 +4,7 @@ import { IoArrowRedo, IoArrowRedoOutline } from "react-icons/io5";
 const ButtonShare = ({
   setIsSharing,
 }: {
-  setIsSharing: Dispatch<SetStateAction<boolean>>;
+  setIsSharing?: Dispatch<SetStateAction<boolean>>;
 }) => {
   return (
     <div
