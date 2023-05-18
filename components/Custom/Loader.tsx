@@ -19,9 +19,8 @@ const CustomLoader = ({
         width={w}
         color={c}
         ariaLabel="tail-spin-loading"
-        radius="1"
+        radius="2"
         wrapperStyle={{}}
-        wrapperClass=""
         visible={true}
       />
     </div>

@@ -5,29 +5,67 @@
 
 body {
   font-family: "Poppins", sans-serif;
+  background: rgb(241 245 249);
+
 }
-
-
-
 
 
 /* width */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
+
+
+.secondary-scroll {
+  overflow-y: scroll;
+}
+
+
+/* width */
+.secondary-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f100;
+  background: #e6e6e600;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #7cacf5;
+  background: #9ec5ff;
   border-radius: 100px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #608bca;
+  background: #81abeb;
+}
+
+
+
+.notif-icon {
+  position: absolute;
+  right: 5px;
+  bottom: -8px;
+}
+
+
+span.unread-icon {
+  background: #629AEF;
+  width: 7px;
+  height: 7px;
+  left: 7px;
+  top: 7px;
+}
+
+
+.notif-option-dropdown {
+  width: 120px;
+}
+
+.notif-option-icon {
+  margin-left: 10px;
+  margin-right: 5px;
 }

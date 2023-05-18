@@ -7,6 +7,10 @@ import {
   IoChatbubbles,
   IoLayersOutline,
   IoLayers,
+  IoPersonOutline,
+  IoDiscOutline,
+  IoSettingsOutline,
+  IoLogOutOutline,
 } from "react-icons/io5";
 
 export const API_SERVER: string = "https://api-creatve.onrender.com";
@@ -31,10 +35,10 @@ export const HOME_MOBILE_NAV = [
   },
 
   {
-    name: "Friends",
+    name: "Followers",
     iconActive: IoPeople,
     iconInactive: IoPeopleOutline,
-    path: "/friends",
+    path: "/followers",
   },
 
   {
@@ -45,18 +49,37 @@ export const HOME_MOBILE_NAV = [
   },
 ];
 
+export const PROFILE_DROPDOWN_LIST = [
+  {
+    name: "My Profile",
+    icon: IoPersonOutline,
+    path: (id: string) => `/profile/${id}`,
+  },
+  {
+    name: "Active Status",
+    icon: IoDiscOutline,
+    path: () => null,
+  },
+  {
+    name: "Account Settings",
+    icon: IoSettingsOutline,
+    path: () => "/account-settings",
+  },
+  {
+    name: "Sign out",
+    icon: IoLogOutOutline,
+    path: () => null,
+  },
+];
+
 export const CHAT_STATUS = [
   {
     status: "Online",
     color: "bg-green-500",
   },
   {
-    status: "Offline",
-    color: "bg-gray-400",
-  },
-  {
     status: "Busy",
-    color: "bg-amber-500",
+    color: "bg-orange-400",
   },
 ];
 
@@ -117,7 +140,31 @@ export const NOTIFICATIONS = {
       post_id,
     };
   },
-  COMMENT: () => {},
+  COMMENT: (
+    first_name: string,
+    last_name: string,
+    notify_to: string,
+    notify_by: string,
+    post_id: string
+  ) => {
+    return {
+      notification_type: "Comment",
+      notification: `${
+        first_name + " " + last_name
+      } commented to one of your post`,
+      notify_to,
+      notify_by,
+      link: `/homefeed/post/${post_id}`,
+      reaction_icon: "📜",
+      post_id,
+    };
+  },
   SHARE: () => {},
   ADD_FRIEND: () => {},
+};
+
+export const ROUTES = {
+  LOGIN: "/login",
+  REGISTER: "/register",
+  HOMEFEED: "/homefeed",
 };

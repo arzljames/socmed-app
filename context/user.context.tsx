@@ -29,14 +29,19 @@ export const UserDataProvider = ({ children }: ReactChildrenProps) => {
       createdAt: null,
       updatedAt: null,
     },
-    friend_list: [],
+    followers: [],
   });
 
   const [token, setToken] = useState<string>("");
   const [attachmentWarning, setAttachmentWarning] = useState<boolean>(false);
-  const [notifications, setNotifications] = useState<AxiosResponse[]>([]);
-  const [posts, setPosts] = useState<AxiosResponse[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [posts, setPosts] = useState<any>({});
   const [people, setPeople] = useState<AxiosResponse[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [status, setStatus] = useState<"Online" | "Offline" | "Busy" | "">("");
+  const [notificationBadge, setNotificationBadge] = useState<number>(0);
+  const [postCount, setPostCount] = useState<number>(0);
 
   return (
     <UserDataContext.Provider
@@ -53,6 +58,16 @@ export const UserDataProvider = ({ children }: ReactChildrenProps) => {
         setPosts,
         people,
         setPeople,
+        isLoading,
+        setIsLoading,
+        isFetching,
+        setIsFetching,
+        status,
+        setStatus,
+        notificationBadge,
+        setNotificationBadge,
+        postCount,
+        setPostCount,
       }}
     >
       {children}

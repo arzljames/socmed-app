@@ -8,21 +8,21 @@ import {
 } from "../../../utils/api/api";
 import useUserData from "../../../hooks/useUserData";
 import _ from "lodash";
-import { useRouter } from "next/router";
 import { REACTIONS_EMOJI, NOTIFICATIONS } from "../../../const";
 import Error from "next/error";
 import { socket } from "../../../utils/socket";
 import useSound from "../../../hooks/useSound";
 
 const ButtonLike = ({
+  isReacted,
   findReaction,
   data,
 }: {
+  isReacted: boolean;
   findReaction: any;
   data: any;
 }): ReactElement => {
   const { user, token } = useUserData() as any;
-  const router = useRouter();
   const [isHover, setIsHover] = useState<boolean>(false);
 
   const handleReact = async ({
@@ -57,6 +57,7 @@ const ButtonLike = ({
 
       setIsHover(false);
       socket.emit("client:refresh_data");
+
       return res;
     } catch (error) {
       throw new Error(error);
@@ -95,16 +96,16 @@ const ButtonLike = ({
       onMouseEnter={handleHoverBtn}
       onMouseLeave={handleRemoveHoverBtn}
       className={`relative flex w-[30%] cursor-pointer select-none items-center justify-center rounded-xl border py-2    ${
-        findReaction
-          ? " border  text-color-main-dark "
+        isReacted
+          ? " border border-slate-300  bg-blue-50 text-color-main"
           : "text-text-sub hover:bg-gray-100"
       }`}
     >
-      {findReaction ? (
+      {isReacted ? (
         <div className="flex  items-center ">
-          <p>{findReaction.reaction_icon}</p>
+          <p>{findReaction?.reaction_icon}</p>
           <p className="ml-2 text-xs font-semibold md:text-sm ">
-            {findReaction.reaction}
+            {findReaction?.reaction}
           </p>
         </div>
       ) : (
