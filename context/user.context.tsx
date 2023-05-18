@@ -5,7 +5,9 @@ import { ReactChildrenProps, UserProps } from "../interface";
 const UserDataContext = createContext({});
 
 export const UserDataProvider = ({ children }: ReactChildrenProps) => {
+
   const [user, setUser] = useState<UserProps>({
+
     _id: "",
     email: "",
     username: "",
@@ -21,6 +23,7 @@ export const UserDataProvider = ({ children }: ReactChildrenProps) => {
       middle_name: "",
       initials: "",
       profile_color: "",
+
       profile_photo: "",
       cover_photo: "",
       createdAt: null,
