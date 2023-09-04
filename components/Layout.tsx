@@ -148,7 +148,7 @@ const Layout = ({ children }: ReactChildrenProps) => {
       const timer = setTimeout(() => setIsLoading(false), 100);
       return () => clearTimeout(timer);
     });
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
     if (user?._id) {
