@@ -1,5 +1,6 @@
 import { useSession } from "next-auth/react";
 import useUserData from "../hooks/useUserData";
+import useRefreshData from "../hooks/useRefreshData";
 import { ReactChildrenProps, SessionProps, UserProps } from "../interface";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import {
@@ -145,10 +146,11 @@ const Layout = ({ children }: ReactChildrenProps) => {
   useEffect(() => {
     socket.on("server:refresh_data", () => {
       setIsLoading(true);
+       useRefreshData(router);
       const timer = setTimeout(() => setIsLoading(false), 100);
       return () => clearTimeout(timer);
     });
-  }, [socket, router]);
+  }, [socket]);
 
   useEffect(() => {
     if (user?._id) {
